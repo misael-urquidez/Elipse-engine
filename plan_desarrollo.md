@@ -106,25 +106,38 @@ Teléfono, reloj, web, escritorio: todos son clientes delgados del mismo servici
 
 ## 5. Fases de desarrollo
 
-### Fase 0 — Fundaciones (semanas 1–2)
+### Fase 0 — Fundaciones (semanas 1–2)(completado)
 - Estructura del repo, entorno, configuración con Pydantic.
 - Endpoint `/v1/chat` mínimo: recibe texto, llama a un solo proveedor (ej. Claude API), devuelve respuesta. Sin personalidad ni memoria todavía.
 - Objetivo: tener algo que responde de punta a punta.
 
-### Fase 1 — Identidad y memoria básica (semanas 3–5)
+### Fase 1 — Identidad y memoria básica (semanas 3–5)(completada)
 - Definir personalidad como datos (no como prompt hardcodeado): rasgos, tono, reglas de estilo, guardados en SQLite.
 - Inyectar esa personalidad en cada llamada al modelo.
 - Memoria simple: guardar historial de conversación y hechos clave.
 
-### Fase 2 — Model Router (semanas 6–7)
+
+### Fase 2 — Model Router (semanas 6–7)(completado)
 - Añadir un segundo proveedor (ej. GPT o modelo local).
 - Reglas simples de enrutamiento según tipo de tarea.
 - Logging estructurado de cada decisión (qué proveedor, por qué, resultado) — esto es crítico para depurar y no opcional.
 
-### Fase 3 — Agent Loop y herramientas (semanas 8–11)
+### Fase 3 — Agent Loop y herramientas (semanas 8–11)(completado)
 - Loop analizar → planificar → ejecutar → verificar, empezando con una versión mínima (casi un wrapper de function-calling).
-- Tool System: Python, archivos, Git, web. Diseñar esquema compatible con MCP desde el inicio.
+- Tool System: Python, archivos,web. Diseñar esquema compatible con MCP desde el inicio.
 - Ejecución en background para tareas largas + WebSocket para pasos intermedios (evitar bloquear el HTTP).
+
+**Hallazgos importantes de esta sesión (limitaciones reales del modelo, no bugs de código):**
+- `qwen2.5-coder:3b` no ejecuta tool-calling de forma confiable — confabula éxito sin
+  llamar la función real. Arreglado forzando `qwen3:4b` siempre que hay herramientas activas,
+  independientemente de lo que decida el Model Router (el router sigue logueando su decisión
+  original para no perder esa información).
+- `qwen3:4b`, aunque mucho más confiable, NO es 100% consistente entre intentos idénticos:
+  en una prueba, el mismo mensaje exacto una vez alucinó una llamada de tool como texto plano
+  (`used_tools: false`) y la siguiente vez ejecutó la herramienta correctamente. Conclusión:
+  toda verificación de comportamiento debe hacerse con evidencia directa en Python
+  (`read_file`, `list_files`, etc.), nunca confiando solo en el texto de `reply`.
+
 
 ### Fase 4 — Memoria semántica y research pipeline (semanas 12–15)
 - Migrar de SQLite puro a memoria semántica (Qdrant/Chroma) para contexto recuperable por similitud.

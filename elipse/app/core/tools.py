@@ -381,3 +381,71 @@ def execute_tool(name: str, arguments: dict):
         return func(**arguments)
     except Exception as e:
         return f"Error ejecutando '{name}': {e}"
+
+# ---- Verificación post-ejecución (paso "verificar" del Agent Loop) ----
+# Cada verificador recibe (arguments, result) y devuelve (ok: bool, detail: str).
+# Se basa en evidencia directa (releer el archivo, revisar el string de error), nunca
+# en confiar en que el modelo "dice" que funcionó — ver hallazgos de Fase 3 en
+# plan_desarrollo.md sobre qwen3:4b confabulando éxito en tool-calling.
+
+def _verify_write_file(arguments: dict, result: str):
+    if result.startswith("Error") or result.startswith("AVISO"):
+        return False, result
+    path = arguments.get("path", "")
+    try:
+        target = _resolve_safe_path(path)
+    except ValueError as e:
+        return False, f"No se pudo verificar: {e}"
+    if not target.exists():
+        return False, f"write_file reportó éxito pero '{path}' no existe en disco."
+    expected = arguments.get("content", "")
+    actual = target.read_text(encoding="utf-8", errors="replace")
+    if actual != expected:
+        return False, f"El contenido de '{path}' en disco no coincide con lo que se pidió escribir."
+    return True, "Archivo verificado: existe y su contenido coincide."
+
+
+def _verify_run_python(arguments: dict, result: str):
+    if result.startswith("Error") or result.startswith("FALTA UNA LIBRERÍA"):
+        return False, result
+    return True, "El código se ejecutó sin errores reportados."
+
+
+def _verify_default(arguments: dict, result: str):
+    if isinstance(result, str) and result.startswith("Error"):
+        return False, result
+    return True, "Sin verificador específico para esta herramienta; no se detectó un error explícito."
+
+
+TOOL_VERIFIERS = {
+    "write_file": _verify_write_file,
+    "run_python": _verify_run_python,
+}
+
+
+def verify_tool_result(name: str, arguments: dict, result) -> tuple[bool, str]:
+    verifier = TOOL_VERIFIERS.get(name, _verify_default)
+    try:
+        return verifier(arguments, result)
+    except Exception as e:
+        return False, f"Error durante la verificación de '{name}': {e}"
+
+
+def tools_schema_to_mcp():
+    """
+    Traduce TOOLS_SCHEMA (formato nativo de Ollama function-calling) al formato
+    estándar de MCP: cada tool con 'name', 'description' e 'inputSchema' (que es
+    como MCP llama al mismo bloque JSON Schema que Ollama llama 'parameters').
+    Esto es lo que le permite a cualquier cliente/IA que hable MCP (Claude, GPT,
+    otros agentes) descubrir y usar las herramientas de ELIPSE sin acoplarse
+    al formato interno de Ollama.
+    """
+    mcp_tools = []
+    for tool in TOOLS_SCHEMA:
+        fn = tool["function"]
+        mcp_tools.append({
+            "name": fn["name"],
+            "description": fn["description"],
+            "inputSchema": fn["parameters"],
+        })
+    return mcp_tools

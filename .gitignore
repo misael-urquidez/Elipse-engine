@@ -1,0 +1,4 @@
+elipse/venv/ 
+elipse/.env 
+__pycache__/ 
+*.pyc 

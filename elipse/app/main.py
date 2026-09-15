@@ -1,21 +1,24 @@
-import time
-from fastapi import FastAPI
+import asyncio
+import queue as queue_module
+import re
+import subprocess
+import sys
+import threading
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
-import ollama
+
 from app.config import settings
 from app.core.db import get_connection, init_db
 from app.core.seed_personality import seed
-from app.core.personality import build_system_prompt
-from app.core.router import choose_provider
-from app.core.tools import TOOLS_SCHEMA, execute_tool
-from app.core.safety import is_risky, create_pending_action, list_pending_actions, resolve_pending_action
+from app.core.safety import list_pending_actions, resolve_pending_action
+from app.core.tools import TOOLS_SCHEMA, tools_schema_to_mcp
+from app.core.tasks import create_task, get_task, run_agent_task
 
 app = FastAPI(title=settings.app_name)
 
 init_db()
 seed()
-
-HISTORY_LIMIT = 10
 
 
 class ChatRequest(BaseModel):
@@ -30,31 +33,8 @@ class ConfirmActionRequest(BaseModel):
     approved: bool
 
 
-def save_message(role: str, content: str):
-    conn = get_connection()
-    conn.execute("INSERT INTO messages (role, content) VALUES (?, ?)", (role, content))
-    conn.commit()
-    conn.close()
-
-
-def get_recent_messages(limit: int = HISTORY_LIMIT):
-    conn = get_connection()
-    rows = conn.execute(
-        "SELECT role, content FROM messages ORDER BY id DESC LIMIT ?",
-        (limit,)
-    ).fetchall()
-    conn.close()
-    return list(reversed([dict(r) for r in rows]))
-
-
-def log_router_decision(message: str, provider: str, reason: str, duration: float):
-    conn = get_connection()
-    conn.execute(
-        "INSERT INTO router_log (message, provider_chosen, reason, duration_seconds) VALUES (?, ?, ?, ?)",
-        (message, provider, reason, duration)
-    )
-    conn.commit()
-    conn.close()
+class InstallPackageRequest(BaseModel):
+    package: str
 
 
 @app.get("/v1/status")
@@ -64,80 +44,59 @@ def status():
 
 @app.post("/v1/chat")
 def chat(request: ChatRequest):
-    system_prompt = build_system_prompt()
-    history = get_recent_messages()
+    """
+    Ya NO devuelve la respuesta directamente. Crea una tarea, la corre en un hilo
+    aparte (para no bloquear el servidor), y devuelve de inmediato un task_id.
+    Conéctate a ws_url para ver el progreso en tiempo real, o usa GET /v1/task/{id}
+    si solo quieres el resultado final sin WebSocket.
+    """
+    task_id = create_task()
+    threading.Thread(target=run_agent_task, args=(task_id, request.message), daemon=True).start()
 
-    provider_type, reason = choose_provider(request.message)
+    return {
+        "task_id": task_id,
+        "status": "en_progreso",
+        "ws_url": f"/v1/ws/{task_id}",
+        "poll_url": f"/v1/task/{task_id}",
+    }
 
-    # qwen2.5-coder:3b no ejecuta tool-calling de forma confiable (confirmado en pruebas reales).
-    # Mientras haya herramientas activas, forzamos siempre el modelo general.
-    model_name = settings.ollama_model
-    if provider_type == "code":
-        reason = f"{reason} (forzado a modelo general: coder no soporta tool-calling confiable)"
 
-    save_message("user", request.message)
+@app.get("/v1/task/{task_id}")
+def task_status(task_id: str):
+    task = get_task(task_id)
+    if not task:
+        return {"status": "error", "detail": "No existe una tarea con ese id."}
+    return {"status": task["status"], "result": task["result"]}
 
-    conversation = [{"role": "system", "content": system_prompt}]
-    conversation.extend(history)
-    conversation.append({"role": "user", "content": request.message})
 
-    start = time.time()
+@app.websocket("/v1/ws/{task_id}")
+async def ws_task(websocket: WebSocket, task_id: str):
+    await websocket.accept()
 
-    response = ollama.chat(model=model_name, messages=conversation, tools=TOOLS_SCHEMA)
-    tool_calls = response["message"].get("tool_calls")
+    task = get_task(task_id)
+    if not task:
+        await websocket.send_json({"type": "error", "mensaje": "No existe una tarea con ese id."})
+        await websocket.close()
+        return
 
-    if tool_calls:
-        conversation.append(response["message"])
-        pending_confirmations = []
-
-        for call in tool_calls:
-            tool_name = call["function"]["name"]
-            tool_args = call["function"]["arguments"]
-
-            risky, detail = is_risky(tool_name, tool_args)
-
-            if risky:
-                # No se ejecuta nada. Se guarda como pendiente y se corta el loop aquí.
-                action_id = create_pending_action(tool_name, tool_args, detail)
-                pending_confirmations.append({"id": action_id, "tool": tool_name, "detail": detail})
-                conversation.append({
-                    "role": "tool",
-                    "content": (
-                        f"Esta acción requiere confirmación humana antes de ejecutarse: {detail} "
-                        f"(id: {action_id}). No se ejecutó nada todavía."
-                    )
-                })
+    try:
+        while True:
+            try:
+                # Se hace en un hilo aparte porque queue.Queue.get() es bloqueante
+                # y no queremos congelar el event loop de FastAPI mientras esperamos.
+                event = await asyncio.to_thread(task["queue"].get, True, 30)
+            except queue_module.Empty:
+                await websocket.send_json({"type": "ping"})
                 continue
 
-            result = execute_tool(tool_name, tool_args)
-            conversation.append({"role": "tool", "content": str(result)})
+            await websocket.send_json(event)
 
-        if pending_confirmations:
-            duration = time.time() - start
-            reply = (
-                "Esta acción necesita tu confirmación antes de ejecutarse. "
-                "Usa POST /v1/confirm-action/{id} con {\"approved\": true} para aprobarla, "
-                "o {\"approved\": false} para rechazarla."
-            )
-            save_message("assistant", reply)
-            log_router_decision(request.message, model_name, reason, duration)
-            return {
-                "reply": reply,
-                "provider": model_name,
-                "reason": reason,
-                "used_tools": False,
-                "pending_confirmations": pending_confirmations
-            }
+            if event["type"] == "final":
+                break
+    except WebSocketDisconnect:
+        pass
 
-        response = ollama.chat(model=model_name, messages=conversation)
-
-    duration = time.time() - start
-
-    reply = response["message"]["content"]
-    save_message("assistant", reply)
-    log_router_decision(request.message, model_name, reason, duration)
-
-    return {"reply": reply, "provider": model_name, "reason": reason, "used_tools": bool(tool_calls)}
+    await websocket.close()
 
 
 @app.post("/v1/memory")
@@ -169,15 +128,54 @@ def router_log():
 
 @app.get("/v1/pending-actions")
 def pending_actions():
-    """Lista todas las acciones que han pasado por el flujo de confirmación (pendientes, aprobadas o rechazadas)."""
     return {"actions": list_pending_actions()}
 
 
 @app.post("/v1/confirm-action/{action_id}")
 def confirm_action(action_id: str, request: ConfirmActionRequest):
-    """
-    Aprueba o rechaza una acción pendiente. Este endpoint es exclusivamente para uso humano
-    (por Swagger UI, curl, o un futuro front con un botón) — el modelo no tiene ninguna forma
-    de llamarlo, no está en TOOLS_SCHEMA.
-    """
     return resolve_pending_action(action_id, request.approved)
+
+
+@app.get("/v1/tools")
+def list_tools(format: str = "ollama"):
+    """
+    format=ollama (default): esquema nativo, el que usa el modelo local para tool-calling.
+    format=mcp: mismo esquema traducido a MCP (inputSchema en vez de parameters), para que
+    un cliente externo que hable MCP pueda ver qué ofrece ELIPSE sin acoplarse al formato interno.
+    """
+    if format == "mcp":
+        return {"format": "mcp", "tools": tools_schema_to_mcp()}
+    return {"format": "ollama", "tools": TOOLS_SCHEMA}
+
+
+# Nombre de paquete válido: letras, números, guiones, guion bajo, punto.
+PACKAGE_NAME_PATTERN = re.compile(r"^[A-Za-z0-9_.\-]+$")
+
+
+@app.post("/v1/install-package")
+def install_package(request: InstallPackageRequest):
+    """
+    Instala un paquete de pip. NO es una herramienta del modelo — no está en TOOLS_SCHEMA,
+    así que el chat nunca puede llamarlo. Exclusivamente para uso humano directo.
+    """
+    package = request.package.strip()
+
+    if not package or not PACKAGE_NAME_PATTERN.match(package):
+        return {"status": "error", "detail": "Nombre de paquete inválido."}
+
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "pip", "install", package],
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+    except subprocess.TimeoutExpired:
+        return {"status": "error", "detail": "La instalación tardó demasiado y se canceló."}
+
+    output = (result.stdout or "") + (result.stderr or "")
+
+    if result.returncode != 0:
+        return {"status": "error", "package": package, "output": output[-3000:]}
+
+    return {"status": "installed", "package": package, "output": output[-3000:]}

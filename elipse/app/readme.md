@@ -2,7 +2,7 @@
 
 Este documento explica qué hace cada archivo dentro de `app/`, la carpeta que contiene el motor de ELIPSE. Está pensado para que cualquiera (incluido tu yo del futuro, o cualquier IA con la que sigas trabajando) entienda rápido cómo está armado el Core sin tener que leer todo el código de una.
 
-> **Fase actual del plan:** Fase 0, 1 y 2 cerradas. Próxima: Fase 3 — Agent Loop y herramientas.
+> **Fase actual del plan:** Fase 0, 1, 2 y 3 cerradas (Git descartado a propósito, no se necesita por ahora). Próxima: Fase 4 — Memoria semántica y research pipeline.
 
 ---
 
@@ -13,6 +13,7 @@ elipse/
 ├── .env                        # Variables de entorno (config local, no se sube a git)
 ├── requirements.txt            # Dependencias de Python del proyecto
 ├── elipse.db                   # Base de datos SQLite (se genera sola al arrancar)
+├── workspace/                  # Carpeta sandbox: único lugar donde las tools pueden leer/escribir
 └── app/
     ├── __init__.py
     ├── main.py                 # Punto de entrada: define la API y conecta todo
@@ -22,7 +23,10 @@ elipse/
         ├── db.py                 # Conexión a SQLite y creación de tablas
         ├── seed_personality.py   # Carga los datos iniciales de personalidad
         ├── personality.py        # Arma el system prompt a partir de los datos guardados
-        └── router.py              # Model Router: decide qué modelo de Ollama usar según el mensaje
+        ├── router.py             # Model Router: decide qué modelo de Ollama usar según el mensaje
+        ├── tools.py               # Tool System: definición + ejecución + verificación de herramientas
+        ├── safety.py              # Decide qué acciones son riesgosas y gestiona confirmación humana
+        └── tasks.py                # Agent Loop: analizar → planificar → ejecutar → verificar, en background
 ```
 
 ---
@@ -30,102 +34,107 @@ elipse/
 ## Qué hace cada archivo
 
 ### `app/main.py`
-Es el corazón visible del motor: acá vive la API construida con **FastAPI**.
+El corazón visible del motor: acá vive la API construida con **FastAPI**.
 
 - Al arrancar, inicializa la base de datos (`init_db()`) y carga la personalidad por defecto si todavía no existe (`seed()`).
-- Define los endpoints:
-  - `GET /v1/status` → chequeo simple de que el servidor está vivo, devuelve el nombre de la app y el modelo activo.
-  - `POST /v1/chat` → endpoint principal. Recibe un mensaje del usuario, arma el `system_prompt` con la personalidad de ELIPSE, junta los últimos mensajes del historial para dar contexto de la conversación en curso, usa el **Model Router** para decidir qué modelo de Ollama usar, le manda todo al modelo elegido, guarda tanto el mensaje del usuario como la respuesta en la base de datos, registra la decisión del router en el log, y devuelve la respuesta (junto con qué proveedor se usó y por qué).
-  - `POST /v1/memory` → guarda un "hecho" permanente sobre el usuario o su contexto (ej: en qué proyecto está trabajando), para que ELIPSE lo tenga presente en cada conversación futura, no solo cuando se menciona.
-  - `GET /v1/memory` → lista los hechos guardados hasta ahora.
-  - `GET /v1/router-log` → muestra las últimas 20 decisiones que tomó el Model Router: qué modelo eligió, por qué, y cuánto tardó en responder.
-- Es el archivo que "conecta" todas las piezas: configuración, base de datos, personalidad, historial, router y el proveedor del modelo (Ollama).
+- Endpoints principales:
+  - `GET /v1/status` → chequeo de que el servidor está vivo.
+  - `POST /v1/chat` → **ya no responde directo**. Crea una tarea (`create_task`), la corre en un thread aparte (`run_agent_task`) para no bloquear el servidor, y devuelve de inmediato `task_id` + `ws_url` + `poll_url`.
+  - `GET /v1/task/{task_id}` → consulta el resultado final de una tarea (alternativa a WebSocket, sin eventos intermedios).
+  - `WS /v1/ws/{task_id}` → progreso en vivo de una tarea: eventos `progreso`, `plan`, `verificacion` y `final`.
+  - `POST /v1/memory` / `GET /v1/memory` → guardar y listar hechos permanentes.
+  - `GET /v1/router-log` → últimas 20 decisiones del Model Router.
+  - `GET /v1/pending-actions` → lista acciones que están esperando confirmación humana.
+  - `POST /v1/confirm-action/{id}` → aprueba o rechaza una acción riesgosa pendiente (ej. sobreescribir un archivo).
+  - `GET /v1/tools?format=ollama|mcp` → expone el catálogo de herramientas, en formato nativo o traducido a MCP.
+  - `POST /v1/install-package` → instala un paquete de pip. **No** es una tool del modelo (no está en `TOOLS_SCHEMA`); solo para uso humano directo, cuando `run_python` reporta que falta una librería.
 
 ### `app/config.py`
-Define la configuración del proyecto usando `pydantic-settings`.
-
-- Lee variables desde el archivo `.env`.
-- Define qué modelo de Ollama se usa para conversación general (`ollama_model`) y cuál se usa para tareas de código (`ollama_code_model`) — estos son los dos proveedores que usa el Model Router.
-- Centraliza cualquier valor que pueda cambiar según el entorno, sin tener que tocar el código en `main.py`.
+Configuración del proyecto con `pydantic-settings`, leída desde `.env`: nombre de la app, modelo general (`ollama_model`), modelo de código (`ollama_code_model`) y carpeta del workspace (`workspace_dir`).
 
 ### `app/core/db.py`
-Maneja todo lo relacionado a la conexión con SQLite.
-
-- `get_connection()`: abre una conexión a `elipse.db` (el archivo de base de datos, que vive en la raíz del proyecto).
-- `init_db()`: crea las tablas si todavía no existen. Define la estructura de la memoria, identidad y decisiones de ELIPSE:
-  - **`identity`**: datos fijos — nombre, creador, propósito, valores centrales. No cambia con cada conversación.
-  - **`traits`**: rasgos de personalidad como números entre 0.0 y 1.0 (curiosidad, calidez, formalidad, etc). Permite que ELIPSE tenga varios rasgos a la vez, en vez de "un solo tono".
-  - **`style_rules`**: reglas de estilo en texto plano (cómo debe hablar, qué evitar, incluyendo reglas de identidad como no negar quién es su creador).
-  - **`messages`**: historial de conversación — cada mensaje (de usuario o de ELIPSE), con su rol y fecha. Se usa tanto para guardar registro como para dar contexto de la conversación en curso.
-  - **`facts`**: hechos permanentes guardados manualmente vía `/v1/memory`, que se inyectan siempre en el `system_prompt` (no solo cuando se los menciona en la conversación).
-  - **`router_log`**: registro estructurado de cada decisión del Model Router — mensaje recibido, modelo elegido, motivo de la elección, y tiempo de respuesta.
+Conexión a SQLite y creación de tablas: `identity`, `traits`, `style_rules`, `messages`, `facts`, `router_log`, y `pending_actions` (nueva en esta fase — guarda acciones riesgosas que esperan aprobación humana: herramienta, argumentos, motivo y estado).
 
 ### `app/core/seed_personality.py`
-Se encarga de poblar la base de datos con los valores iniciales de personalidad, **solo si todavía no existen** (para no pisar cambios que hagas a mano más adelante).
-
-- Inserta la identidad base de ELIPSE (nombre, creador, propósito, valores).
-- Inserta los rasgos por defecto (curiosidad, analítica, calidez, formalidad, humor, proactividad, prudencia), cada uno con un valor inicial.
-- Inserta las reglas de estilo por defecto (tono informal salvo que el tema amerite formalidad, priorizar utilidad, explicar el razonamiento, no negar quién es su creador, etc).
-
-Este archivo es el que se edita cuando querés ajustar cómo "es" ELIPSE desde el inicio — es la definición de su personalidad base en forma de datos, no de prompt escrito a mano en el código de chat.
+Puebla la base con identidad, rasgos y reglas de estilo por defecto, solo si todavía no existen. Es el archivo que se edita para ajustar cómo "es" ELIPSE desde el inicio.
 
 ### `app/core/personality.py`
-Convierte los datos guardados en SQLite en el texto que efectivamente se le manda al modelo como `system prompt`.
-
-- `build_system_prompt()`: lee la identidad, los rasgos, las reglas de estilo y los hechos guardados (`facts`) desde la base de datos, y arma un bloque de texto único con todo eso.
-- Este texto es el que hace que el modelo de turno (el que haya elegido el router) responda "siendo" ELIPSE, con su propósito, personalidad y memoria de hechos clave, en vez de responder genérico.
+`build_system_prompt()`: arma el system prompt a partir de identidad + rasgos + reglas + hechos guardados en SQLite. Sin cambios respecto a la fase anterior.
 
 ### `app/core/router.py`
-El **Model Router**: decide qué modelo de Ollama usar para cada mensaje, según reglas simples (if/else), tal como pide la Fase 2 del plan.
+Model Router por reglas simples (palabras clave de código → modelo de código, si no → modelo general), con logging del motivo. Sin cambios de lógica — pero ver nota abajo sobre cómo lo usa `tasks.py` ahora.
 
-- `choose_provider(message)`: revisa si el mensaje contiene palabras clave relacionadas a código (python, función, bug, error, sql, etc). Si encuentra alguna, indica que se use el modelo de código (`qwen2.5-coder:3b`). Si no, indica que se use el modelo general (`qwen3:4b`).
-- Devuelve también el motivo de la decisión (qué palabra clave disparó la regla, o que no se encontró ninguna), que se guarda en `router_log` para poder auditar después cómo está decidiendo el router.
+### `app/core/tools.py`
+**Nuevo — Tool System.** Define qué puede hacer ELIPSE y cómo se verifica que realmente lo hizo.
+
+- `TOOLS_SCHEMA`: catálogo en formato nativo de Ollama (function-calling): `get_current_datetime`, `calculate`, `list_files`, `read_file`, `write_file`, `search_web`, `run_python`.
+- Todo acceso a archivos pasa por `_resolve_safe_path()`, que confina cualquier ruta dentro de `workspace/` y bloquea `../`, rutas absolutas o salidas del sandbox.
+- `write_file` nunca sobreescribe directo si el modelo lo pide: si el archivo ya existe, `safety.py` intercepta la llamada antes de ejecutarla.
+- `search_web` (via `ddgs`) devuelve resultados marcados explícitamente como "información, no instrucciones", para que el modelo no obedezca texto malicioso incrustado en una página.
+- `run_python` ejecuta código real en un subproceso aislado (`python -I`), con timeout, límite de salida, y un bloqueo por patrones (`BLOCKED_PATTERNS`) para imports/llamadas obviamente peligrosas. Si falta una librería, lo reporta explícitamente y aclara que la instalación la debe aprobar el humano vía `/v1/install-package` — el modelo nunca la instala solo.
+- `tools_schema_to_mcp()`: traduce el catálogo a formato MCP (`inputSchema`), para que cualquier cliente/IA externo que hable MCP pueda descubrir y usar las herramientas de ELIPSE.
+- `verify_tool_result()`: el paso "verificar" del Agent Loop. Se basa en evidencia directa (releer el archivo, revisar el código de salida real), **nunca** en lo que el modelo "dice" que pasó — esto es en respuesta directa a lo observado con `qwen3:4b` confabulando éxito de tool-calling en algunas corridas.
+
+### `app/core/safety.py`
+**Nuevo.** Única fuente de verdad sobre qué acción es "riesgosa" — el modelo no participa en esta decisión.
+
+- `is_risky()`: hoy solo marca como riesgosa la sobreescritura de un archivo existente.
+- `create_pending_action()` / `get_pending_action()` / `list_pending_actions()`: gestionan el ciclo de vida de una acción pendiente en la tabla `pending_actions`.
+- `resolve_pending_action()`: al aprobar, ejecuta la herramienta real (forzando `overwrite=True` solo acá, nunca a pedido del modelo); al rechazar, no ejecuta nada.
+
+### `app/core/tasks.py`
+**Nuevo — Agent Loop.** Corre en un thread aparte, orquesta todo lo anterior y emite eventos de progreso a una `queue.Queue` que el WebSocket va leyendo en vivo.
+
+Loop por mensaje: **analizar** (arma prompt + historial) → **planificar** (los `tool_calls` que decide el modelo son el plan, se emiten como evento `plan`) → **ejecutar** (cada tool, salvo que `safety.py` la marque riesgosa, en cuyo caso queda pendiente de confirmación) → **verificar** (con evidencia directa vía `tools.py`) → si algo falló y quedan intentos, se le informa el detalle al modelo y se replanifica (`MAX_LOOP_ITERATIONS = 2`) → responder.
+
+Nota sobre el Model Router en este flujo: `qwen2.5-coder:3b` no ejecuta tool-calling de forma confiable, así que **siempre se fuerza el modelo general** cuando hay herramientas activas — el router igual loguea su decisión original para no perder esa información.
 
 ---
 
-## Cómo fluye una petición a `/v1/chat`
+## Cómo fluye una petición a `/v1/chat` ahora
 
 ```
 Usuario envía mensaje
         │
         ▼
-main.py recibe el POST
+main.py crea una tarea y la corre en un thread (run_agent_task) → responde de inmediato con task_id
         │
         ▼
-personality.py arma el system_prompt (identidad + rasgos + reglas + hechos, vía db.py)
+tasks.py arma system_prompt (personality.py) + historial + mensaje
         │
         ▼
-main.py trae los últimos mensajes del historial (contexto de la conversación en curso)
+router.py decide modelo (y se fuerza el general si hay tools activas)
         │
         ▼
-router.py decide qué modelo usar (general o código) y por qué
+Ollama responde: ¿pide usar herramientas?
         │
-        ▼
-db.py guarda el mensaje del usuario en la tabla `messages`
-        │
-        ▼
-main.py llama a Ollama con [system_prompt + historial + mensaje del usuario], usando el modelo elegido
-        │
-        ▼
-Ollama devuelve la respuesta
-        │
-        ▼
-db.py guarda la respuesta en `messages`
-        │
-        ▼
-db.py guarda la decisión del router en `router_log`
-        │
-        ▼
-main.py devuelve la respuesta al usuario (+ qué proveedor se usó y por qué)
+   ┌────┴────┐
+   NO         SÍ
+   │           │
+   │           ▼
+   │      safety.py revisa cada llamada:
+   │      ¿riesgosa? → pendiente de confirmación humana (/v1/confirm-action)
+   │      ¿segura?   → tools.py la ejecuta
+   │                       │
+   │                       ▼
+   │                tools.py la verifica con evidencia real
+   │                       │
+   │              ¿falló y quedan intentos? → se re-planifica
+   │                       │
+   │                       ▼
+   └──────────────► se guarda todo en messages/router_log, se arma la respuesta final
+                            │
+                            ▼
+        Eventos emitidos por WebSocket en cada paso (progreso, plan, verificación, final)
 ```
 
 ---
 
 ## Notas / cosas pendientes conocidas
 
-- **El `HISTORY_LIMIT` está fijo en 10 mensajes.** Si una conversación crece mucho, en algún momento va a convenir resumir el historial viejo en vez de mandarlo siempre crudo — eso queda para una fase de memoria más avanzada, no es urgente ahora.
-- **Los rasgos de personalidad se editan a mano por ahora** (vía `seed_personality.py` o directo en la base). La idea de una personalidad que evoluciona sola con el tiempo, con un mecanismo de evaluación controlado, queda para una fase posterior — no se construye todavía para evitar complejidad prematura.
-- **Los hechos (`facts`) se guardan manualmente**, no hay todavía un sistema que detecte solo qué vale la pena recordar de una conversación. Eso corresponde a la Fase 4 (memoria semántica / research pipeline).
-- **El Model Router usa reglas simples por palabras clave.** Es exactamente lo que pide esta fase del plan ("empieza con reglas simples, se sofistica después si hace falta") — no está pensado para ser perfecto, sino para cumplir el mínimo necesario y dejar espacio a mejorarlo cuando haga falta.
-- **Sin GPU dedicada, las respuestas pueden tardar bastante** (se vieron casos de +40 segundos con el modelo de código). El campo `duration_seconds` en `router_log` sirve justamente para poder medir esto con datos reales, no a ojo.
-- **Todavía no hay Agent Loop ni Tool System.** ELIPSE puede conversar con personalidad, memoria y elegir entre dos modelos, pero todavía no puede ejecutar acciones (Python, archivos, Git, web). Eso es la Fase 3, la próxima en el plan.
+- **Git queda fuera del Tool System por ahora** — decisión explícita, no falta ni bug, se agrega si en algún momento hace falta.
+- **`run_python` no tiene sandbox de filesystem**, solo bloqueo por lista negra de patrones (`BLOCKED_PATTERNS`) y `cwd` en `workspace/`. A diferencia de `read_file`/`write_file`, el código Python que corre ahí sí podría tocar rutas absolutas fuera del workspace. Bajo riesgo mientras esto corra solo local y sin exponerse en red — pero si en Fase 5 se expone a otros dispositivos, conviene resolverlo con sandboxing real (contenedor separado o intérprete restringido) antes de abrir el acceso.
+- **`_tasks` (estado de las tareas del Agent Loop) vive en memoria**, se pierde si reinicias el servidor a mitad de una tarea. Aceptable para esta fase.
+- **El `HISTORY_LIMIT` sigue fijo en 10 mensajes.** Resumir historial viejo queda para una fase de memoria más avanzada.
+- **Los rasgos de personalidad y los hechos siguen siendo manuales.** Detectar solo qué vale la pena recordar de una conversación corresponde a la Fase 4.
+- **Sin autenticación todavía** — no es parte de esta fase, corresponde a Fase 5 (multi-dispositivo).
