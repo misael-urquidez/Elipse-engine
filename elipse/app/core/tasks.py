@@ -1,49 +1,27 @@
+"""
+Registro de tareas en background y puente entre la API y el Core.
+
+Aquí NO vive el Agent Loop (eso es core.py). Este módulo solo:
+  - lleva el registro de tareas (estado, resultado y cola de eventos),
+  - conecta el `emit` del Core con la cola que lee el WebSocket,
+  - corre el pipeline de investigación con el mismo mecanismo.
+"""
+
 import queue
-import time
 import uuid
 from typing import Optional
 
-import ollama
+from app.core.core import ElipseCore
+from app.core.providers import OllamaProvider
+from app.core.research import run_research_pipeline
 
-from app.config import settings
-from app.core.db import get_connection
-from app.core.personality import build_system_prompt
-from app.core.router import choose_provider
-from app.core.tools import TOOLS_SCHEMA, execute_tool, verify_tool_result
-from app.core.safety import is_risky, create_pending_action
-
-HISTORY_LIMIT = 10
-MAX_LOOP_ITERATIONS = 2  # 1 intento + 1 reintento si la verificación falla
+# Único punto donde se decide QUÉ proveedor usa el Core. Para probar otro
+# (Claude, GPT...) se cambia solo esta línea.
+_core = ElipseCore(provider=OllamaProvider())
 
 # Almacén de tareas en memoria. Se pierde si reinicias el servidor — suficiente
 # para esta fase; una versión futura podría guardar esto en SQLite también.
 _tasks: dict[str, dict] = {}
-
-
-def _save_message(role: str, content: str):
-    conn = get_connection()
-    conn.execute("INSERT INTO messages (role, content) VALUES (?, ?)", (role, content))
-    conn.commit()
-    conn.close()
-
-
-def _get_recent_messages(limit: int = HISTORY_LIMIT):
-    conn = get_connection()
-    rows = conn.execute(
-        "SELECT role, content FROM messages ORDER BY id DESC LIMIT ?", (limit,)
-    ).fetchall()
-    conn.close()
-    return list(reversed([dict(r) for r in rows]))
-
-
-def _log_router_decision(message: str, provider: str, reason: str, duration: float):
-    conn = get_connection()
-    conn.execute(
-        "INSERT INTO router_log (message, provider_chosen, reason, duration_seconds) VALUES (?, ?, ?, ?)",
-        (message, provider, reason, duration)
-    )
-    conn.commit()
-    conn.close()
 
 
 def create_task() -> str:
@@ -69,137 +47,40 @@ def _emit(task_id: str, event: dict):
 
 def run_agent_task(task_id: str, message: str):
     """
-    Corre el Agent Loop completo para 'message' y va emitiendo eventos de progreso.
-    Diseñada para correr en un hilo aparte (ver main.py) — nunca bloquea el servidor
-    principal mientras trabaja.
-
-    Loop: analizar -> planificar -> ejecutar -> verificar (con reintento acotado si
-    la verificación falla) -> responder.
+    Corre el Core para 'message' dentro de una tarea. Diseñada para correr en un
+    hilo aparte (ver main.py) — nunca bloquea el servidor principal.
     """
+    status, final = _core.run(message, emit=lambda event: _emit(task_id, event))
+
+    _tasks[task_id]["status"] = status
+    _tasks[task_id]["result"] = final
+    _emit(task_id, {"type": "final", "data": final})
+
+
+def run_research_task(task_id: str, topic: str):
+    """
+    Corre el pipeline de investigación (buscar -> resumir -> guardar) dentro de
+    una tarea con el mismo mecanismo de progreso/WebSocket que run_agent_task,
+    para reusar /v1/task/{id} y /v1/ws/{id} sin duplicar infraestructura.
+    """
+    def emit_cb(event):
+        _emit(task_id, event)
+
     try:
-        _emit(task_id, {"type": "progreso", "mensaje": "Analizando tu mensaje..."})
+        result = run_research_pipeline(topic, emit=emit_cb)
 
-        system_prompt = build_system_prompt()
-        history = _get_recent_messages()
+        if result["status"] != "ok":
+            _tasks[task_id]["status"] = "error"
+            _tasks[task_id]["result"] = result
+            _emit(task_id, {"type": "final", "data": result})
+            return
 
-        provider_type, reason = choose_provider(message)
-
-        # qwen2.5-coder:3b no ejecuta tool-calling de forma confiable (confirmado en pruebas reales).
-        model_name = settings.ollama_model
-        if provider_type == "code":
-            reason = f"{reason} (forzado a modelo general: coder no soporta tool-calling confiable)"
-
-        _save_message("user", message)
-
-        conversation = [{"role": "system", "content": system_prompt}]
-        conversation.extend(history)
-        conversation.append({"role": "user", "content": message})
-
-        start = time.time()
-        final_tool_calls_used = False
-
-        for iteration in range(1, MAX_LOOP_ITERATIONS + 1):
-            response = ollama.chat(model=model_name, messages=conversation, tools=TOOLS_SCHEMA)
-            tool_calls = response["message"].get("tool_calls")
-
-            if not tool_calls:
-                break  # no hizo falta ninguna herramienta
-
-            final_tool_calls_used = True
-            conversation.append(response["message"])
-
-            # PLANIFICAR: los tool_calls que decidió el modelo SON el plan de este loop
-            # mínimo. Se hace explícito emitiéndolo antes de ejecutar nada.
-            plan = [{"tool": c["function"]["name"], "arguments": c["function"]["arguments"]} for c in tool_calls]
-            _emit(task_id, {"type": "plan", "intento": iteration, "pasos": plan})
-
-            pending_confirmations = []
-            verification_failures = []
-
-            # EJECUTAR
-            for call in tool_calls:
-                tool_name = call["function"]["name"]
-                tool_args = call["function"]["arguments"]
-
-                _emit(task_id, {"type": "progreso", "mensaje": f"Ejecutando herramienta: {tool_name}..."})
-
-                risky, detail = is_risky(tool_name, tool_args)
-                if risky:
-                    action_id = create_pending_action(tool_name, tool_args, detail)
-                    pending_confirmations.append({"id": action_id, "tool": tool_name, "detail": detail})
-                    conversation.append({
-                        "role": "tool",
-                        "content": (
-                            f"Esta acción requiere confirmación humana antes de ejecutarse: {detail} "
-                            f"(id: {action_id}). No se ejecutó nada todavía."
-                        )
-                    })
-                    continue
-
-                result = execute_tool(tool_name, tool_args)
-                conversation.append({"role": "tool", "content": str(result)})
-
-                # VERIFICAR: evidencia directa, no el texto que el modelo genere después.
-                ok, detail = verify_tool_result(tool_name, tool_args, result)
-                _emit(task_id, {
-                    "type": "verificacion", "intento": iteration, "tool": tool_name,
-                    "ok": ok, "detalle": detail,
-                })
-                if not ok:
-                    verification_failures.append(f"- {tool_name}: {detail}")
-
-            if pending_confirmations:
-                duration = time.time() - start
-                reply = (
-                    "Esta acción necesita tu confirmación antes de ejecutarse. "
-                    "Usa POST /v1/confirm-action/{id} con {\"approved\": true} para aprobarla, "
-                    "o {\"approved\": false} para rechazarla."
-                )
-                _save_message("assistant", reply)
-                _log_router_decision(message, model_name, reason, duration)
-
-                final = {
-                    "reply": reply,
-                    "provider": model_name,
-                    "reason": reason,
-                    "used_tools": False,
-                    "pending_confirmations": pending_confirmations,
-                }
-                _tasks[task_id]["status"] = "esperando_confirmacion"
-                _tasks[task_id]["result"] = final
-                _emit(task_id, {"type": "final", "data": final})
-                return
-
-            if verification_failures and iteration < MAX_LOOP_ITERATIONS:
-                # No confiamos en que el modelo "sepa" que falló solo: se lo decimos
-                # explícitamente con la evidencia recolectada y se reintenta el plan.
-                _emit(task_id, {"type": "progreso", "mensaje": "La verificación encontró problemas, reintentando..."})
-                conversation.append({
-                    "role": "user",
-                    "content": (
-                        "La verificación automática (basada en evidencia directa, no en lo que reportaste) "
-                        "encontró problemas con el resultado anterior:\n" + "\n".join(verification_failures) +
-                        "\nCorrige el plan y vuelve a intentarlo."
-                    )
-                })
-                continue  # re-planificar
-
-            _emit(task_id, {"type": "progreso", "mensaje": "Generando la respuesta final..."})
-            response = ollama.chat(model=model_name, messages=conversation)
-            break
-
-        duration = time.time() - start
-        reply = response["message"]["content"]
-        _save_message("assistant", reply)
-        _log_router_decision(message, model_name, reason, duration)
-
-        final = {"reply": reply, "provider": model_name, "reason": reason, "used_tools": final_tool_calls_used}
         _tasks[task_id]["status"] = "completado"
-        _tasks[task_id]["result"] = final
-        _emit(task_id, {"type": "final", "data": final})
+        _tasks[task_id]["result"] = result
+        _emit(task_id, {"type": "final", "data": result})
 
     except Exception as e:
-        final = {"reply": f"Error interno: {e}", "provider": None, "reason": None, "used_tools": False}
+        final = {"status": "error", "detail": f"Error interno: {e}"}
         _tasks[task_id]["status"] = "error"
         _tasks[task_id]["result"] = final
         _emit(task_id, {"type": "final", "data": final})

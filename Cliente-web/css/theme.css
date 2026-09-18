@@ -1,0 +1,137 @@
+/*
+  ELIPSE — Tema (claro / oscuro) + marca + switch
+  Se carga DESPUÉS de components.css, así que puede sobreescribir sin tocar los otros archivos.
+  El modo claro es el que ya definen tokens.css / components.css; aquí solo va lo del oscuro.
+*/
+
+:root{ color-scheme: light; }
+
+/* ---------- Paleta modo oscuro (editar aquí para retocar colores) ---------- */
+:root[data-theme="dark"]{
+  color-scheme: dark;
+
+  --color-bg:          #131110;
+  --color-panel:       #1B1917;
+  --color-panel-alt:   #262321;
+  --color-border:      #34302C;
+  --color-text:        #ECE7E1;
+  --color-muted:       #A39C94;
+
+  --color-accent:      #5BB8E0;
+  --color-accent-dim:  #46A0C8;
+  --color-accent-soft: rgba(91,184,224,0.14);
+
+  --color-success:     #63C08F;
+  --color-success-dim: #4FA87A;
+  --color-success-soft:rgba(99,192,143,0.14);
+
+  --color-error:       #EF7A67;
+  --color-error-soft:  rgba(239,122,103,0.14);
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.45);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+}
+
+/* Colores que components.css dejó fijos y no cambian solos con las variables */
+:root[data-theme="dark"] .status-dropdown summary:hover{ background:rgba(255,255,255,0.05); }
+:root[data-theme="dark"] .composer button,
+:root[data-theme="dark"] .btn,
+:root[data-theme="dark"] .settings .save-btn{ color:#0E1A21; }   /* el acento es claro: texto oscuro para que se lea */
+:root[data-theme="dark"] .spinner{ border-color:rgba(91,184,224,0.3); border-top-color:var(--color-accent); }
+
+/* Transición suave al cambiar de tema (no corre al cargar: el tema se fija antes del primer render) */
+body, .sidebar, main, .status-dropdown, .msg, .result-card, table, th,
+.composer textarea, .row input, .settings input, nav button{
+  transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+}
+
+/* ---------- Logo: responsivo + sombra desenfocada al pasar el mouse ---------- */
+:root{
+  --logo-filter: brightness(1);                          /* "none" no se puede combinar con drop-shadow; brightness(1) no cambia nada */
+  --logo-glow: 0 10px 16px rgba(0,0,0,0.42);            /* claro: sombra negra */
+}
+:root[data-theme="dark"]{
+  /* El PNG lleva texto negro: en oscuro se invierte conservando los tonos del rayo. */
+  --logo-filter: invert(1) hue-rotate(180deg);
+  --logo-glow: 0 6px 20px rgba(255,59,48,0.85);          /* oscuro: sombra roja */
+}
+
+.brand-logo{
+  display:block;
+  width:clamp(120px, 78%, 190px);   /* se adapta al ancho disponible */
+  max-width:190px;
+  height:auto;
+  margin-left:-18px;                 /* compensa el margen transparente del PNG */
+  filter:var(--logo-filter);
+  transition:filter .3s ease;
+}
+@media (hover:hover){                /* en pantallas táctiles no existe "hover": evita sombras pegadas */
+  .brand-logo:hover{
+    filter:var(--logo-filter) drop-shadow(var(--logo-glow));
+  }
+}
+
+@media (max-width:860px){
+  .sidebar{ padding-right:72px; }    /* deja libre la esquina del switch */
+  .brand-logo{ width:auto; height:46px; margin-left:0; }
+}
+
+/* ---------- Switch de modo oscuro (esquina superior derecha) ---------- */
+.theme-switch{
+  all:unset;
+  box-sizing:border-box;
+  position:fixed;
+  top:16px;
+  right:20px;
+  z-index:20;
+  cursor:pointer;
+  border-radius:999px;
+}
+.theme-switch:focus-visible{
+  outline:2px solid var(--color-accent);
+  outline-offset:3px;
+}
+.theme-switch .track{
+  position:relative;
+  display:block;
+  width:56px;
+  height:30px;
+  border-radius:999px;
+  background:var(--color-panel-alt);
+  border:1px solid var(--color-border);
+  box-shadow:var(--shadow-sm);
+  transition:background-color .25s ease, border-color .25s ease;
+}
+.theme-switch .thumb{
+  position:absolute;
+  top:3px;
+  left:3px;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:var(--color-panel);
+  box-shadow:0 1px 4px rgba(0,0,0,0.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--color-muted);
+  transition:transform .25s cubic-bezier(.4,0,.2,1), background-color .25s ease;
+}
+:root[data-theme="dark"] .theme-switch .thumb{ transform:translateX(26px); }
+.theme-switch .thumb svg{
+  position:absolute;
+  width:14px;
+  height:14px;
+  transition:opacity .2s ease, transform .25s ease;
+}
+.theme-switch .icon-moon{ opacity:0; transform:rotate(-40deg) scale(.6); }
+:root[data-theme="dark"] .theme-switch .icon-sun{ opacity:0; transform:rotate(40deg) scale(.6); }
+:root[data-theme="dark"] .theme-switch .icon-moon{ opacity:1; transform:none; color:var(--color-accent); }
+.theme-switch .icon-sun{ color:#E08A00; }
+
+/* Logo centrado en la sidebar (solo escritorio) */
+@media (min-width:861px){
+  .brand{ align-items:center; }
+  .brand-logo{ margin-left:0; }
+  .brand-sub{ text-align:center; }
+}

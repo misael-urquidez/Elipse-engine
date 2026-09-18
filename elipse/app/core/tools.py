@@ -7,6 +7,8 @@ from pathlib import Path
 from ddgs import DDGS
 
 from app.config import settings
+from app.core import memory
+from app.core.research import run_research_pipeline
 
 # ---- Carpeta restringida: nada fuera de acá se puede tocar ----
 
@@ -171,6 +173,74 @@ TOOLS_SCHEMA = [
                     }
                 },
                 "required": ["code"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "remember",
+            "description": (
+                "Guarda un dato o resumen en la memoria semántica de largo plazo, para poder "
+                "recuperarlo después aunque la pregunta futura no use las mismas palabras. "
+                "Úsalo solo con información ya destilada/resumida por ti, nunca texto crudo "
+                "larguísimo — si es largo, resúmelo primero tú mismo antes de llamar esto."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "string",
+                        "description": "El dato o resumen a recordar, en tus propias palabras."
+                    },
+                    "topic": {
+                        "type": "string",
+                        "description": "Tema o etiqueta corta para clasificar este recuerdo (opcional)."
+                    }
+                },
+                "required": ["content"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "recall",
+            "description": (
+                "Busca en la memoria semántica de largo plazo información relacionada con una "
+                "consulta, incluso si no coincide exactamente en palabras (busca por significado). "
+                "Úsalo cuando el usuario pregunte algo que podrías haber investigado o guardado antes."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Qué buscar en la memoria."
+                    }
+                },
+                "required": ["query"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "research_topic",
+            "description": (
+                "Investiga un tema en internet, resume los hallazgos con IA y guarda el resumen "
+                "en memoria semántica para el futuro. Tarda varios segundos (busca + resume). "
+                "Úsalo cuando el usuario pida investigar algo específico, no para preguntas simples."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "topic": {
+                        "type": "string",
+                        "description": "El tema a investigar."
+                    }
+                },
+                "required": ["topic"]
             }
         }
     }
@@ -362,6 +432,38 @@ def run_python(code: str):
     return output
 
 
+def remember(content: str, topic: str = ""):
+    if not content or not content.strip():
+        return "Error: no se proporcionó contenido para recordar."
+    metadata = {"type": "manual", "topic": topic} if topic else {"type": "manual"}
+    memory_id = memory.add_memory(content.strip(), metadata=metadata)
+    memory.enforce_retention_policy()
+    return f"Guardado en memoria semántica (id: {memory_id})."
+
+
+def recall(query: str, n_results: int = 4):
+    if not query or not query.strip():
+        return "Error: la búsqueda en memoria no puede estar vacía."
+    results = memory.search_memory(query.strip(), n_results=n_results)
+    if not results:
+        return "No hay nada relevante en la memoria semántica todavía."
+    lines = ["[Resultados de memoria semántica — más relevante primero]"]
+    for r in results:
+        tipo = r["metadata"].get("type", "desconocido")
+        lines.append(f"- ({tipo}, distancia {r['distance']:.3f}) {r['content']}")
+    return "\n".join(lines)
+
+
+def research_topic(topic: str):
+    result = run_research_pipeline(topic)
+    if result["status"] != "ok":
+        return f"Error en la investigación: {result.get('detail')}"
+    return (
+        f"Investigación completada sobre '{result['topic']}'. "
+        f"Resumen guardado en memoria (id: {result['memory_id']}):\n{result['summary']}"
+    )
+
+
 TOOL_FUNCTIONS = {
     "get_current_datetime": get_current_datetime,
     "calculate": calculate,
@@ -370,6 +472,9 @@ TOOL_FUNCTIONS = {
     "write_file": write_file,
     "search_web": search_web,
     "run_python": run_python,
+    "remember": remember,
+    "recall": recall,
+    "research_topic": research_topic,
 }
 
 
@@ -411,6 +516,18 @@ def _verify_run_python(arguments: dict, result: str):
     return True, "El código se ejecutó sin errores reportados."
 
 
+def _verify_remember(arguments: dict, result: str):
+    if isinstance(result, str) and result.startswith("Error"):
+        return False, result
+    return True, "Memoria guardada (confirmado por el id devuelto)."
+
+
+def _verify_research_topic(arguments: dict, result: str):
+    if isinstance(result, str) and result.startswith("Error"):
+        return False, result
+    return True, "Investigación completada y guardada en memoria."
+
+
 def _verify_default(arguments: dict, result: str):
     if isinstance(result, str) and result.startswith("Error"):
         return False, result
@@ -420,6 +537,8 @@ def _verify_default(arguments: dict, result: str):
 TOOL_VERIFIERS = {
     "write_file": _verify_write_file,
     "run_python": _verify_run_python,
+    "remember": _verify_remember,
+    "research_topic": _verify_research_topic,
 }
 
 

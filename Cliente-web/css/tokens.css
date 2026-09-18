@@ -1,0 +1,50 @@
+/*
+  ELIPSE — Tokens de diseño
+  Tendencia 13: Diseño web sostenible
+*/
+:root{
+  --color-bg:          #F7F6F3;
+  --color-panel:       #FFFFFF;
+  --color-panel-alt:   #F0EFEC;
+  --color-border:      #E4E2DC;
+  --color-text:        #1A1A18;
+  --color-muted:       #6B6A65;
+
+  --color-accent:      #0B6E99;
+  --color-accent-dim:  #0A5A7A;
+  --color-accent-soft: #E8F4F9;
+
+  --color-success:     #2E7D5B;
+  --color-success-dim: #1F5A42;
+  --color-success-soft:#E6F3ED;
+
+  --color-error:       #C44B3A;
+  --color-error-soft:  #FDF0EE;
+
+  --font-display: 'Fraunces', Georgia, 'Iowan Old Style', serif;
+  --font-body:    'Work Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:    'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -68,5 +68,25 @@ def init_db():
         resolved_at TEXT
     )
 """)
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS research_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        topic TEXT NOT NULL,
+        summary TEXT NOT NULL,
+        memory_id TEXT,
+        sources TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+""")
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS api_keys (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        key_hash TEXT NOT NULL UNIQUE,
+        revoked INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        last_used_at TEXT
+    )
+""")
     conn.commit()
     conn.close()

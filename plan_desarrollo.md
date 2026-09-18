@@ -139,7 +139,7 @@ Teléfono, reloj, web, escritorio: todos son clientes delgados del mismo servici
   (`read_file`, `list_files`, etc.), nunca confiando solo en el texto de `reply`.
 
 
-### Fase 4 — Memoria semántica y research pipeline (semanas 12–15)
+### Fase 4 — Memoria semántica y research pipeline (semanas 12–15)(completado)
 - Migrar de SQLite puro a memoria semántica (Qdrant/Chroma) para contexto recuperable por similitud.
 - Pipeline de investigación: buscar → resumir → guardar destilado.
 - Política de retención/limpieza de memoria (que no crezca sin control).
