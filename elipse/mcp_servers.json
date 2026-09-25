@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:/ruta/que/quieres/compartir"],
+      "include_tools": ["read_text_file", "list_directory"],
+      "auto_approve": ["read_text_file", "list_directory"],
+      "enabled": false
+    },
+    "servidor_remoto": {
+      "url": "https://ejemplo.com/mcp",
+      "headers": { "Authorization": "Bearer ${MI_TOKEN}" },
+      "enabled": false
+    }
+  }
+}

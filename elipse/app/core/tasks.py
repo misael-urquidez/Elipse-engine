@@ -11,13 +11,34 @@ import queue
 import uuid
 from typing import Optional
 
+from app.config import settings
 from app.core.core import ElipseCore
-from app.core.providers import OllamaProvider
+from app.core.providers import build_provider
 from app.core.research import run_research_pipeline
 
-# Único punto donde se decide QUÉ proveedor usa el Core. Para probar otro
-# (Claude, GPT...) se cambia solo esta línea.
-_core = ElipseCore(provider=OllamaProvider())
+
+def _build_core() -> ElipseCore:
+    """
+    Único punto donde se decide QUÉ proveedores usa el Core, según el .env:
+        DEFAULT_PROVIDER=ollama | anthropic | openai
+        CODE_PROVIDER=            (vacío = el mismo; o p. ej. anthropic solo para código)
+    Si la configuración es inválida (falta una API key, nombre desconocido) falla
+    AL ARRANCAR con un mensaje claro, no a mitad de una conversación.
+    """
+    default = build_provider(settings.default_provider)
+    code = build_provider(settings.code_provider) if settings.code_provider.strip() else None
+    return ElipseCore(provider=default, code_provider=code)
+
+
+_core = _build_core()
+
+
+def describe_providers() -> dict:
+    """Qué proveedores hay activos (para /v1/status)."""
+    return {
+        "default": _core.provider.name,
+        "code": _core.code_provider.name if _core.code_provider else None,
+    }
 
 # Almacén de tareas en memoria. Se pierde si reinicias el servidor — suficiente
 # para esta fase; una versión futura podría guardar esto en SQLite también.

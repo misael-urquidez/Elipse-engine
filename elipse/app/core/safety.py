@@ -1,8 +1,9 @@
 import json
 import uuid
 
+from app.core import mcp_client
 from app.core.db import get_connection
-from app.core.tools import TOOL_FUNCTIONS, _resolve_safe_path
+from app.core.tools import _resolve_safe_path, execute_tool
 
 
 def is_risky(tool_name: str, arguments: dict):
@@ -22,6 +23,16 @@ def is_risky(tool_name: str, arguments: dict):
             return False, None
         if target.exists():
             return True, f"Sobreescribir el archivo existente '{path}'."
+
+    # Herramientas de servidores MCP externos: código de terceros que ELIPSE no
+    # controla. Ninguna es de confianza por defecto; solo se ejecutan sin
+    # confirmación si el usuario lo declaró en mcp_servers.json ("auto_approve").
+    if mcp_client.manager.has_tool(tool_name) and not mcp_client.manager.is_auto_approved(tool_name):
+        server = mcp_client.manager.server_of(tool_name)
+        preview = json.dumps(arguments, ensure_ascii=False)
+        if len(preview) > 200:
+            preview = preview[:200] + "..."
+        return True, f"Ejecutar la herramienta externa '{tool_name}' (servidor MCP '{server}') con argumentos: {preview}"
 
     return False, None
 
@@ -68,8 +79,7 @@ def resolve_pending_action(action_id: str, approved: bool):
         if action["tool_name"] == "write_file":
             arguments["overwrite"] = True
 
-        func = TOOL_FUNCTIONS.get(action["tool_name"])
-        result = func(**arguments) if func else "Error: herramienta no encontrada."
+        result = execute_tool(action["tool_name"], arguments)
         new_status = "aprobada"
     else:
         result = "El usuario rechazó esta acción. No se ejecutó nada."

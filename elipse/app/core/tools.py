@@ -7,7 +7,7 @@ from pathlib import Path
 from ddgs import DDGS
 
 from app.config import settings
-from app.core import memory
+from app.core import mcp_client, memory
 from app.core.research import run_research_pipeline
 
 # ---- Carpeta restringida: nada fuera de acá se puede tocar ----
@@ -478,14 +478,27 @@ TOOL_FUNCTIONS = {
 }
 
 
+def get_tools_schema() -> list:
+    """
+    Catálogo COMPLETO que ve el modelo: herramientas propias + las que aporten los
+    servidores MCP conectados (ver mcp_client.py). Se recalcula en cada uso porque
+    los servidores MCP se conectan después de importar este módulo.
+    """
+    return TOOLS_SCHEMA + mcp_client.manager.tool_schemas()
+
+
 def execute_tool(name: str, arguments: dict):
-    if name not in TOOL_FUNCTIONS:
-        return f"Error: herramienta '{name}' no existe."
-    func = TOOL_FUNCTIONS[name]
-    try:
-        return func(**arguments)
-    except Exception as e:
-        return f"Error ejecutando '{name}': {e}"
+    if name in TOOL_FUNCTIONS:
+        func = TOOL_FUNCTIONS[name]
+        try:
+            return func(**arguments)
+        except Exception as e:
+            return f"Error ejecutando '{name}': {e}"
+
+    if mcp_client.manager.has_tool(name):
+        return mcp_client.manager.call_tool(name, arguments)
+
+    return f"Error: herramienta '{name}' no existe."
 
 # ---- Verificación post-ejecución (paso "verificar" del Agent Loop) ----
 # Cada verificador recibe (arguments, result) y devuelve (ok: bool, detail: str).
@@ -550,7 +563,7 @@ def verify_tool_result(name: str, arguments: dict, result) -> tuple[bool, str]:
         return False, f"Error durante la verificación de '{name}': {e}"
 
 
-def tools_schema_to_mcp():
+def tools_schema_to_mcp(schema: list | None = None):
     """
     Traduce TOOLS_SCHEMA (formato nativo de Ollama function-calling) al formato
     estándar de MCP: cada tool con 'name', 'description' e 'inputSchema' (que es
@@ -560,7 +573,7 @@ def tools_schema_to_mcp():
     al formato interno de Ollama.
     """
     mcp_tools = []
-    for tool in TOOLS_SCHEMA:
+    for tool in (TOOLS_SCHEMA if schema is None else schema):
         fn = tool["function"]
         mcp_tools.append({
             "name": fn["name"],

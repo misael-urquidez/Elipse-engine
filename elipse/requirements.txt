@@ -1,6 +1,7 @@
+# mcp>=2 exige pydantic>=2.12 y uvicorn>=0.31.1 (por eso ya no van fijados a 2.9.2 / 0.30.6)
 fastapi==0.115.0
-uvicorn[standard]==0.30.6
-pydantic==2.9.2
+uvicorn[standard]>=0.31.1
+pydantic>=2.12,<3
 pydantic-settings==2.5.2
 anthropic==0.34.2
 python-dotenv==1.0.1
@@ -9,3 +10,5 @@ ddgs==9.16.0
 websockets==17.1
 requests==2.34.2
 chromadb==1.5.9
+httpx
+mcp>=2,<3

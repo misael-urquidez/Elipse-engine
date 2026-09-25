@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 import threading
+from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,11 +15,21 @@ from app.core.auth import create_key, list_keys, require_api_key, require_api_ke
 from app.core.db import get_connection, init_db
 from app.core.seed_personality import seed
 from app.core.safety import list_pending_actions, resolve_pending_action
-from app.core.tools import TOOLS_SCHEMA, tools_schema_to_mcp
-from app.core.tasks import create_task, get_task, run_agent_task, run_research_task
-from app.core import memory
+from app.core.tools import get_tools_schema, tools_schema_to_mcp
+from app.core.tasks import create_task, describe_providers, get_task, run_agent_task, run_research_task
+from app.core import mcp_client, memory
 
-app = FastAPI(title=settings.app_name)
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    # Conectar a los servidores MCP puede tardar (arrancan procesos): se hace en un
+    # hilo para no bloquear el event loop de FastAPI. Si no hay mcp_servers.json, no hace nada.
+    await asyncio.to_thread(mcp_client.start_from_settings)
+    yield
+    await asyncio.to_thread(mcp_client.manager.stop)
+
+
+app = FastAPI(title=settings.app_name, lifespan=lifespan)
 
 # El cliente web (Fase 5) se abre como archivo local (file://) o desde otro
 # dispositivo en tu red, no desde este mismo dominio — sin CORS el navegador
@@ -68,7 +79,13 @@ class CreateKeyRequest(BaseModel):
 
 @app.get("/v1/status")
 def status():
-    return {"status": "ok", "name": settings.app_name, "model": settings.ollama_model}
+    providers = describe_providers()
+    return {
+        "status": "ok",
+        "name": settings.app_name,
+        "model": providers["default"],  # se mantiene la clave "model" por compatibilidad con clientes existentes
+        "providers": providers,
+    }
 
 
 @app.post("/v1/chat", dependencies=[Depends(require_api_key)])
@@ -160,9 +177,17 @@ def confirm_action(action_id: str, request: ConfirmActionRequest):
 
 @app.get("/v1/tools", dependencies=[Depends(require_api_key)])
 def list_tools(format: str = "ollama"):
+    # Catálogo completo: herramientas propias + las de los servidores MCP conectados.
+    schema = get_tools_schema()
     if format == "mcp":
-        return {"format": "mcp", "tools": tools_schema_to_mcp()}
-    return {"format": "ollama", "tools": TOOLS_SCHEMA}
+        return {"format": "mcp", "tools": tools_schema_to_mcp(schema)}
+    return {"format": "ollama", "tools": schema}
+
+
+@app.get("/v1/mcp/status", dependencies=[Depends(require_api_key)])
+def mcp_status():
+    """Estado de cada servidor MCP configurado (conectado, herramientas, error). Sin secretos."""
+    return mcp_client.manager.status()
 
 
 # ---- Fase 4: memoria semántica y research pipeline ----
