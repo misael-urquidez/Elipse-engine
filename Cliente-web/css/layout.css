@@ -30,6 +30,8 @@ a:hover{ text-decoration:underline; }
   padding:28px 22px;
   box-shadow:var(--shadow-sm);
   overflow-y:auto;
+  position:relative;
+  transition:width .22s ease, padding .22s ease;
 }
 
 .brand{
@@ -45,6 +47,7 @@ a:hover{ text-decoration:underline; }
   max-width:190px;          /* cambia este valor para agrandar/achicar el logo */
   height:auto;
   margin-left:-18px;        /* el PNG trae margen transparente: esto alinea la "E" con el resto del texto */
+  transition:max-width .22s ease, margin .22s ease;
 }
 .brand-sub{
   font-size:12px;
@@ -81,6 +84,89 @@ nav{
   font-size:12px;
   color:var(--color-muted);
   margin:12px 0 5px;
+}
+
+/* ---------- Toggle sidebar ---------- */
+.sidebar-toggle{
+  all:unset;
+  cursor:pointer;
+  position:absolute;
+  top:12px;
+  right:10px;
+  z-index:2;
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  color:var(--color-muted);
+  transition:background .15s, color .15s;
+}
+.sidebar-toggle:hover{
+  background:var(--color-panel-alt);
+  color:var(--color-text);
+}
+.sidebar-toggle .icon-expand{ display:none; }
+.sidebar-toggle .icon-collapse{ display:block; }
+
+/* Estado colapsado */
+.app.sidebar-collapsed .sidebar{
+  width:72px;
+  padding:20px 10px;
+  align-items:center;
+}
+.app.sidebar-collapsed .sidebar-toggle{
+  position:static;
+  margin:0 0 16px;
+  right:auto;
+}
+.app.sidebar-collapsed .sidebar-toggle .icon-collapse{ display:none; }
+.app.sidebar-collapsed .sidebar-toggle .icon-expand{ display:block; }
+
+.app.sidebar-collapsed .brand{
+  align-items:center;
+  margin-bottom:16px;
+}
+.app.sidebar-collapsed .brand-logo{
+  max-width:44px;
+  margin-left:0;
+}
+.app.sidebar-collapsed .brand-sub,
+.app.sidebar-collapsed .footnote,
+.app.sidebar-collapsed .settings,
+.app.sidebar-collapsed .status-body,
+.app.sidebar-collapsed .status-dropdown summary .chevron,
+.app.sidebar-collapsed #statusText{
+  display:none !important;
+}
+
+.app.sidebar-collapsed .status-dropdown{
+  margin-bottom:16px;
+  width:100%;
+}
+.app.sidebar-collapsed .status-dropdown summary{
+  justify-content:center;
+  padding:8px;
+}
+.app.sidebar-collapsed .status-dropdown summary .dot{
+  margin:0;
+}
+
+.app.sidebar-collapsed nav{
+  width:100%;
+  align-items:stretch;
+}
+.app.sidebar-collapsed nav button{
+  justify-content:center;
+  padding:12px 4px;
+  font-size:11px;
+  text-align:center;
+  letter-spacing:0;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:clip;
+  max-width:100%;
 }
 
 /* ---------- Main ---------- */
@@ -128,7 +214,13 @@ h1{
 
 /* ---------- Responsive ---------- */
 @media (max-width:860px){
+  .sidebar-toggle{ display:none; } /* en móvil ya se compacta solo */
   .app{ flex-direction:column; }
+  .app.sidebar-collapsed .sidebar{
+    width:100%;
+    padding:14px 16px;
+    align-items:center;
+  }
   .sidebar{
     width:100%;
     flex-direction:row;

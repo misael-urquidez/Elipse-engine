@@ -20,7 +20,7 @@ from app.core.research import run_research_pipeline
 def _build_core() -> ElipseCore:
     """
     Único punto donde se decide QUÉ proveedores usa el Core, según el .env:
-        DEFAULT_PROVIDER=ollama | anthropic | openai
+        DEFAULT_PROVIDER=ollama | anthropic | openai | gemini
         CODE_PROVIDER=            (vacío = el mismo; o p. ej. anthropic solo para código)
     Si la configuración es inválida (falta una API key, nombre desconocido) falla
     AL ARRANCAR con un mensaje claro, no a mitad de una conversación.

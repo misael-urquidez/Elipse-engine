@@ -12,6 +12,7 @@ Proveedores incluidos:
   - OpenAICompatibleProvider  -> OpenAI y todo lo que hable su mismo protocolo
                                  (OpenRouter, Mistral, Groq, LM Studio, vLLM...)
                                  cambiando solo base_url / api_key / model.
+  - GeminiProvider            -> Gemini vía API de Google AI (generateContent)
 
 Para agregar otro: una clase con `name: str` y
     chat(messages, tools=None, allow_tools=True) -> ChatResult
@@ -491,6 +492,186 @@ class OpenAICompatibleProvider(_HTTPProvider):
 
 
 # =============================================================================
+# Gemini (Google AI)
+# =============================================================================
+
+def _to_gemini_messages(messages: list[dict]) -> tuple[Optional[dict], list[dict]]:
+    """
+    Formato neutral -> generateContent de Gemini.
+    Devuelve (system_instruction | None, contents).
+
+    Diferencias:
+      - 'system' va en systemInstruction, no en contents.
+      - el rol del asistente se llama 'model'.
+      - tool_calls son partes functionCall; tool results son functionResponse
+        dentro de un mensaje de rol 'user'.
+      - mensajes consecutivos del mismo rol se fusionan (Gemini lo exige).
+    """
+    system_parts: list[str] = []
+    contents: list[dict] = []
+
+    def push(role: str, parts: list[dict]):
+        parts = [p for p in parts if p]
+        if not parts:
+            return
+        if contents and contents[-1]["role"] == role:
+            contents[-1]["parts"].extend(parts)
+        else:
+            contents.append({"role": role, "parts": list(parts)})
+
+    for message in messages:
+        role = message["role"]
+        content = message.get("content") or ""
+
+        if role == "system":
+            if content.strip():
+                system_parts.append(content)
+
+        elif role == "user":
+            push("user", [{"text": content}])
+
+        elif role == "assistant":
+            parts: list[dict] = []
+            if content and content.strip():
+                parts.append({"text": content})
+            for call in message.get("tool_calls") or []:
+                part: dict = {
+                    "functionCall": {
+                        "name": call["function"]["name"],
+                        "args": call["function"]["arguments"] or {},
+                    }
+                }
+                # Algunos modelos de Gemini devuelven id; lo reinyectamos si existe.
+                if call.get("id"):
+                    part["functionCall"]["id"] = call["id"]
+                parts.append(part)
+            push("model", parts)
+
+        elif role == "tool":
+            name = message.get("name") or "tool"
+            # Gemini espera un objeto JSON en response, no un string suelto.
+            response_payload: dict
+            try:
+                parsed = json.loads(content) if content else {}
+                response_payload = parsed if isinstance(parsed, dict) else {"result": content}
+            except (ValueError, TypeError):
+                response_payload = {"result": content}
+            fn_resp: dict = {"name": name, "response": response_payload}
+            if message.get("tool_call_id"):
+                fn_resp["id"] = message["tool_call_id"]
+            push("user", [{"functionResponse": fn_resp}])
+
+    # Gemini exige que contents empiece por user.
+    while contents and contents[0]["role"] == "model":
+        contents.pop(0)
+
+    system_instruction = (
+        {"parts": [{"text": "\n\n".join(system_parts)}]} if system_parts else None
+    )
+    return system_instruction, contents
+
+
+def _to_gemini_tools(tools: list[dict]) -> list[dict]:
+    declarations = []
+    for t in tools:
+        fn = t.get("function") or {}
+        parameters = fn.get("parameters") or {"type": "object", "properties": {}}
+        # Gemini no siempre tolera additionalProperties; lo quitamos si está.
+        if isinstance(parameters, dict):
+            parameters = dict(parameters)
+            parameters.pop("additionalProperties", None)
+        declarations.append({
+            "name": fn.get("name", ""),
+            "description": fn.get("description", ""),
+            "parameters": parameters,
+        })
+    return [{"functionDeclarations": declarations}] if declarations else []
+
+
+class GeminiProvider(_HTTPProvider):
+    label = "Gemini"
+
+    def __init__(
+        self,
+        api_key: str,
+        model: str,
+        max_tokens: int = 8192,
+        base_url: str = "https://generativelanguage.googleapis.com/v1beta",
+        timeout: Optional[int] = None,
+        http_client: Optional[httpx.Client] = None,
+    ):
+        if not api_key:
+            raise ProviderConfigError("Falta GEMINI_API_KEY en el .env para usar el proveedor 'gemini'.")
+        if not model:
+            raise ProviderConfigError("Falta GEMINI_MODEL en el .env para usar el proveedor 'gemini'.")
+        super().__init__(timeout, http_client)
+        self.name = f"gemini:{model}"
+        self._api_key = api_key
+        self._model = model
+        self._max_tokens = max_tokens
+        self._url = (
+            base_url.rstrip("/")
+            + f"/models/{model}:generateContent"
+        )
+
+    def chat(self, messages, tools=None, allow_tools=True) -> ChatResult:
+        system_instruction, contents = _to_gemini_messages(messages)
+        if not contents:
+            raise ProviderError("No hay ningún mensaje de usuario que enviar a Gemini.")
+
+        body: dict = {
+            "contents": contents,
+            "generationConfig": {"maxOutputTokens": self._max_tokens},
+        }
+        if system_instruction:
+            body["systemInstruction"] = system_instruction
+        if tools:
+            body["tools"] = _to_gemini_tools(tools)
+            body["toolConfig"] = {
+                "functionCallingConfig": {
+                    "mode": "AUTO" if allow_tools else "NONE",
+                }
+            }
+
+        headers = {
+            "content-type": "application/json",
+            "x-goog-api-key": self._api_key,
+        }
+        data = self._post(self._url, headers, body)
+
+        candidates = data.get("candidates") or []
+        if not candidates:
+            # A veces Gemini bloquea por safety y no manda candidates.
+            feedback = data.get("promptFeedback") or {}
+            raise ProviderError(
+                f"Gemini no devolvió candidatos. promptFeedback={feedback!r}"
+            )
+
+        parts = ((candidates[0].get("content") or {}).get("parts")) or []
+        text_chunks: list[str] = []
+        calls: list[ToolCall] = []
+        for part in parts:
+            if "text" in part and part["text"]:
+                text_chunks.append(part["text"])
+            fc = part.get("functionCall")
+            if fc:
+                calls.append(ToolCall(
+                    name=fc.get("name") or "",
+                    arguments=dict(fc.get("args") or {}),
+                    id=fc.get("id") or _new_call_id(),
+                ))
+
+        usage = data.get("usageMetadata") or {}
+        prompt_tokens = usage.get("promptTokenCount")
+
+        return ChatResult(
+            content=strip_think_blocks("".join(text_chunks).strip()),
+            tool_calls=calls,
+            prompt_tokens=prompt_tokens,
+        )
+
+
+# =============================================================================
 # Fábrica: nombre (de la configuración) -> proveedor
 # =============================================================================
 
@@ -515,6 +696,14 @@ def build_provider(name: str) -> Provider:
             base_url=settings.openai_base_url,
         )
 
+    if key == "gemini":
+        return GeminiProvider(
+            api_key=settings.gemini_api_key,
+            model=settings.gemini_model,
+            max_tokens=settings.gemini_max_tokens,
+            base_url=settings.gemini_base_url,
+        )
+
     raise ProviderConfigError(
-        f"Proveedor desconocido: '{name}'. Opciones válidas: ollama, anthropic, openai."
+        f"Proveedor desconocido: '{name}'. Opciones válidas: ollama, anthropic, openai, gemini."
     )

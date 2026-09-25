@@ -29,18 +29,21 @@ import tkinter as tk
 import tkinter.font as tkfont
 import traceback
 import urllib.error
+import urllib.parse
 import urllib.request
 import webbrowser
 from pathlib import Path
 from tkinter import messagebox, simpledialog, ttk
 
 IS_WIN = platform.system() == "Windows"
+IS_LINUX = platform.system() == "Linux"
 FLAGS = subprocess.CREATE_NO_WINDOW if IS_WIN else 0
 ROOT = Path(__file__).resolve().parent
 ENV_PATH, PREFS_PATH, LOGS = ROOT / ".env", ROOT / "panel_prefs.json", ROOT / "logs"
 CLIENT_FILE = "elipse_client.html"  # cliente web que abre el botón «Abrir consola»
 PORT, OLLAMA_PORT = 8000, 11434
-OLLAMA_INSTALLER = "https://ollama.com/download/OllamaSetup.exe"
+OLLAMA_INSTALLER_WIN = "https://ollama.com/download/OllamaSetup.exe"
+OLLAMA_INSTALL_SH = "https://ollama.com/install.sh"
 
 # ─────────────────────────── Diseño: paleta y tipografía ───────────────────────────
 C = dict(
@@ -50,8 +53,43 @@ C = dict(
     sec_c="#4A4458", on_sec_c="#E8DEF8",
     good="#B5E8B9", on_good="#0C3B1A", err="#F2B8B5", on_err="#601410", warm="#FFB783",
 )
-FD = ("Segoe UI Black", 28)
-FDS = ("Segoe UI Black", 20)
+
+
+def _pick_font(candidates, size, weight="normal"):
+    """Elige la primera fuente instalada de la lista (Win/Linux/macOS)."""
+    available = set()
+    try:
+        root = tk._default_root
+        if root is not None:
+            available = set(tkfont.families(root))
+    except Exception:
+        available = set()
+    for name in candidates:
+        if not available or name in available:
+            return (name, size, weight) if weight != "normal" else (name, size)
+    name = candidates[-1]
+    return (name, size, weight) if weight != "normal" else (name, size)
+
+
+def _init_fonts():
+    """Fuentes con fallback multiplataforma (llamar cuando ya exista un root de Tk)."""
+    global FD, FDS, FT, FB, FBB, FS, FBTN, FMONO
+    ui = ["Segoe UI", "Ubuntu", "Noto Sans", "DejaVu Sans", "Liberation Sans", "Arial", "sans-serif"]
+    ui_black = ["Segoe UI Black", "Segoe UI", "Ubuntu", "Noto Sans", "DejaVu Sans", "sans-serif"]
+    mono = ["Consolas", "Cascadia Mono", "Ubuntu Mono", "DejaVu Sans Mono", "Liberation Mono", "Courier New", "monospace"]
+    FD = _pick_font(ui_black, 28, "bold")
+    FDS = _pick_font(ui_black, 20, "bold")
+    FT = _pick_font(ui, 15, "bold")
+    FB = _pick_font(ui, 10)
+    FBB = _pick_font(ui, 10, "bold")
+    FS = _pick_font(ui, 9)
+    FBTN = _pick_font(ui, 10, "bold")
+    FMONO = _pick_font(mono, 9)
+
+
+# Valores por defecto hasta que App() llame a _init_fonts()
+FD = ("Segoe UI Black", 28, "bold")
+FDS = ("Segoe UI Black", 20, "bold")
 FT = ("Segoe UI", 15, "bold")
 FB = ("Segoe UI", 10)
 FBB = ("Segoe UI", 10, "bold")
@@ -60,6 +98,20 @@ FBTN = ("Segoe UI", 10, "bold")
 FMONO = ("Consolas", 9)
 BOLT = [(4, -15), (-9, 3), (-1, 3), (-4, 15), (9, -4), (1, -4)]
 BUSY = ("checking", "starting", "stopping")
+
+# Plantilla mínima de .env si no existe
+_ENV_TEMPLATE = """# ELIPSE — generado automáticamente por el Control Panel
+DEFAULT_PROVIDER=ollama
+OLLAMA_MODEL=qwen2.5:3b
+# Opciones de proveedor: ollama | anthropic | openai | gemini
+# ANTHROPIC_API_KEY=
+# ANTHROPIC_MODEL=claude-sonnet-5
+# OPENAI_API_KEY=
+# OPENAI_BASE_URL=https://api.openai.com/v1
+# OPENAI_MODEL=
+# GEMINI_API_KEY=
+# GEMINI_MODEL=gemini-2.5-flash
+"""
 
 
 def mix(a, b, t):
@@ -181,9 +233,52 @@ def find_ollama():
     if exe:
         return exe
     if IS_WIN:
-        p = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Ollama\ollama.exe")
-        return p if os.path.exists(p) else None
+        for p in (
+            os.path.expandvars(r"%LOCALAPPDATA%\Programs\Ollama\ollama.exe"),
+            os.path.expandvars(r"%PROGRAMFILES%\Ollama\ollama.exe"),
+        ):
+            if p and os.path.exists(p):
+                return p
+        return None
+    # Linux / macOS: rutas habituales
+    for p in ("/usr/local/bin/ollama", "/usr/bin/ollama", os.path.expanduser("~/bin/ollama")):
+        if os.path.exists(p) and os.access(p, os.X_OK):
+            return p
     return None
+
+
+def ensure_project_layout():
+    """Crea logs/, .env básico y comprueba que exista app/. No instala paquetes Python solo."""
+    notes = []
+    try:
+        LOGS.mkdir(parents=True, exist_ok=True)
+    except Exception as e:
+        notes.append(f"No pude crear logs/: {e}")
+
+    if not ENV_PATH.exists():
+        try:
+            ENV_PATH.write_text(_ENV_TEMPLATE, encoding="utf-8")
+            notes.append("Se creó un .env básico (DEFAULT_PROVIDER=ollama).")
+        except Exception as e:
+            notes.append(f"No pude crear .env: {e}")
+
+    if not (ROOT / "app").is_dir():
+        notes.append("No está la carpeta app/ junto al panel. ELIPSE Core no podrá arrancar hasta que copies el proyecto completo.")
+
+    # Dependencias típicas del core (aviso, no instalación silenciosa)
+    missing_py = []
+    for mod in ("fastapi", "uvicorn", "httpx", "pydantic_settings"):
+        try:
+            __import__(mod if mod != "pydantic_settings" else "pydantic_settings")
+        except ImportError:
+            missing_py.append(mod)
+    if missing_py:
+        notes.append(
+            "Faltan paquetes Python del core: "
+            + ", ".join(missing_py)
+            + ". En la raíz del proyecto: pip install -r requirements.txt (o usá el venv)."
+        )
+    return notes
 
 
 def list_ollama_models():
@@ -216,6 +311,44 @@ def fetch_models(base_url, api_key):
     except ValueError:
         raise RuntimeError("El servidor respondió algo que no es JSON. ¿La URL base termina en /v1?")
     return sorted(i["id"] for i in body.get("data", []) if "id" in i)
+
+
+def fetch_gemini_models(api_key, base_url="https://generativelanguage.googleapis.com/v1beta"):
+    """GET {base_url}/models con x-goog-api-key. Solo modelos que soportan generateContent."""
+    if not api_key:
+        raise RuntimeError("Falta la API key de Gemini.")
+    headers = {"User-Agent": "ELIPSE-Panel/1.0", "x-goog-api-key": api_key}
+    url = base_url.rstrip("/") + "/models?pageSize=100"
+    names = []
+    try:
+        while url:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as r:
+                body = json.loads(r.read().decode("utf-8"))
+            for m in body.get("models") or []:
+                # name viene como "models/gemini-2.5-flash"
+                raw = (m.get("name") or "").strip()
+                short = raw.split("/")[-1] if raw else ""
+                if not short:
+                    continue
+                methods = m.get("supportedGenerationMethods") or m.get("supported_generation_methods") or []
+                # Si no viene la lista, igual lo incluimos; si viene, filtramos por generateContent.
+                if methods and "generateContent" not in methods:
+                    continue
+                names.append(short)
+            token = body.get("nextPageToken") or body.get("next_page_token")
+            if token:
+                url = base_url.rstrip("/") + "/models?pageSize=100&pageToken=" + urllib.parse.quote(token)
+            else:
+                url = None
+    except urllib.error.HTTPError as e:
+        raise RuntimeError("API key inválida o sin permiso (401/403)." if e.code in (401, 403)
+                           else f"HTTP {e.code}: {e.read().decode('utf-8', 'replace')[:200]}")
+    except urllib.error.URLError as e:
+        raise RuntimeError(f"No se pudo conectar a la API de Gemini: {e.reason}")
+    except ValueError:
+        raise RuntimeError("La API de Gemini devolvió algo que no es JSON válido.")
+    return sorted(set(names))
 
 
 _DUMMY_TOOL = {
@@ -259,14 +392,69 @@ def check_tool_support(base_url, api_key, model, timeout=20):
         return None
 
 
+def check_gemini_tool_support(api_key, model, base_url="https://generativelanguage.googleapis.com/v1beta", timeout=20):
+    """Prueba real: generateContent mínimo con functionDeclarations.
+    True = aceptó tools, False = rechazo explícito, None = no concluyente."""
+    headers = {
+        "User-Agent": "ELIPSE-Panel/1.0",
+        "Content-Type": "application/json",
+        "x-goog-api-key": api_key,
+    }
+    body = json.dumps({
+        "contents": [{"role": "user", "parts": [{"text": "hola"}]}],
+        "tools": [{
+            "functionDeclarations": [{
+                "name": "ping_de_prueba",
+                "description": "Función de prueba del panel de ELIPSE. No la uses de verdad.",
+                "parameters": {"type": "object", "properties": {}},
+            }]
+        }],
+        "generationConfig": {"maxOutputTokens": 1},
+    }).encode("utf-8")
+    url = base_url.rstrip("/") + f"/models/{model}:generateContent"
+    req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout):
+            pass
+        return True
+    except urllib.error.HTTPError as e:
+        try:
+            msg = e.read().decode("utf-8", "replace").lower()
+        except Exception:
+            msg = ""
+        if e.code == 400 and any(s in msg for s in (
+            "tool", "function", "functioncall", "function_call",
+            "functiondeclaration", "does not support", "not supported",
+        )):
+            return False
+        return None
+    except Exception:
+        return None
+
+
 def kill_port(port):
     if IS_WIN:
         out = subprocess.run(["netstat", "-ano"], capture_output=True, text=True, creationflags=FLAGS).stdout
         for line in out.splitlines():
             if f":{port} " in line and "LISTENING" in line:
                 subprocess.run(["taskkill", "/F", "/T", "/PID", line.split()[-1]], capture_output=True, creationflags=FLAGS)
-    else:
-        subprocess.run(f"lsof -ti:{port} | xargs -r kill -9", shell=True, capture_output=True)
+        return
+    # Linux/macOS: lsof → fuser → ss
+    killed = False
+    if shutil.which("lsof"):
+        r = subprocess.run(f"lsof -ti:{port}", shell=True, capture_output=True, text=True)
+        pids = (r.stdout or "").strip().split()
+        for pid in pids:
+            subprocess.run(["kill", "-9", pid], capture_output=True)
+            killed = True
+    if not killed and shutil.which("fuser"):
+        subprocess.run(["fuser", "-k", f"{port}/tcp"], capture_output=True)
+        killed = True
+    if not killed and shutil.which("ss"):
+        r = subprocess.run(["ss", "-lptn", f"sport = :{port}"], capture_output=True, text=True)
+        import re as _re
+        for m in _re.finditer(r"pid=(\d+)", r.stdout or ""):
+            subprocess.run(["kill", "-9", m.group(1)], capture_output=True)
 
 
 def kill_ollama():
@@ -275,6 +463,9 @@ def kill_ollama():
             subprocess.run(["taskkill", "/F", "/T", "/IM", exe], capture_output=True, creationflags=FLAGS)
     else:
         subprocess.run(["pkill", "-f", "ollama"], capture_output=True)
+        # systemd user service (instalaciones recientes)
+        if shutil.which("systemctl"):
+            subprocess.run(["systemctl", "--user", "stop", "ollama"], capture_output=True)
 
 
 def launch_ollama(logf):
@@ -593,11 +784,78 @@ class LogWindow(tk.Toplevel):
         self.title(f"Logs de {svc.name}")
         self.geometry("780x460")
         self.configure(bg=C["bg"])
-        tk.Label(self, text=svc.name, font=FT, fg=C["primary"], bg=C["bg"]).pack(anchor="w", padx=22, pady=(16, 8))
-        self.txt = tk.Text(self, bg=C["card"], fg=C["text"], font=FMONO, relief="flat", bd=0, padx=16, pady=12,
-                           wrap="none", highlightthickness=0, state="disabled")
-        self.txt.pack(fill="both", expand=True, padx=20, pady=(0, 20))
+
+        top = tk.Frame(self, bg=C["bg"])
+        top.pack(fill="x", padx=22, pady=(16, 8))
+        tk.Label(top, text=svc.name, font=FT, fg=C["primary"], bg=C["bg"]).pack(side="left")
+
+        # Botón: ir al final de los logs
+        self.btn_bottom = Pill(
+            top, "↓ Final", self._go_bottom,
+            kind="ghost", width=90, height=36, bg=C["bg"]
+        )
+        self.btn_bottom.pack(side="right")
+
+        # Contenedor del texto (para poder poner el botón flotante encima)
+        self.body = tk.Frame(self, bg=C["bg"])
+        self.body.pack(fill="both", expand=True, padx=20, pady=(0, 20))
+
+        self.txt = tk.Text(
+            self.body, bg=C["card"], fg=C["text"], font=FMONO, relief="flat",
+            bd=0, padx=16, pady=12, wrap="none", highlightthickness=0, state="disabled"
+        )
+        self.txt.pack(fill="both", expand=True)
+
+        # Botón flotante ↓ (aparece si no estás al final)
+        self.float_btn = tk.Canvas(
+            self.body, width=40, height=40, bg=C["card"],
+            highlightthickness=0, cursor="hand2"
+        )
+        rrect(self.float_btn, 2, 2, 38, 38, 12, fill=C["primary_c"], outline="")
+        self.float_btn.create_text(20, 20, text="↓", fill=C["on_primary_c"], font=("Segoe UI", 14, "bold"))
+        self.float_btn.bind("<Button-1>", lambda e: self._go_bottom())
+        self.float_btn.place(relx=1.0, rely=1.0, x=-16, y=-16, anchor="se")
+        self.float_btn.place_forget()  # oculto al inicio
+
+        self.txt.bind("<MouseWheel>", lambda e: self.after(50, self._check_scroll))
+        self.txt.bind("<Button-4>", lambda e: self.after(50, self._check_scroll))  # Linux scroll up
+        self.txt.bind("<Button-5>", lambda e: self.after(50, self._check_scroll))  # Linux scroll down
+
         self._refresh()
+
+    def _go_bottom(self):
+        """Lleva el scroll hasta la última línea."""
+        try:
+            self.txt.see("end")
+            self.txt.yview_moveto(1.0)
+            self._hide_float()
+        except tk.TclError:
+            pass
+
+    def _at_bottom(self):
+        try:
+            return self.txt.yview()[1] >= 0.98
+        except tk.TclError:
+            return True
+
+    def _check_scroll(self):
+        if self._at_bottom():
+            self._hide_float()
+        else:
+            self._show_float()
+
+    def _show_float(self):
+        try:
+            self.float_btn.place(relx=1.0, rely=1.0, x=-16, y=-16, anchor="se")
+            self.float_btn.lift()
+        except tk.TclError:
+            pass
+
+    def _hide_float(self):
+        try:
+            self.float_btn.place_forget()
+        except tk.TclError:
+            pass
 
     def _refresh(self):
         if not self.winfo_exists():
@@ -614,15 +872,17 @@ class LogWindow(tk.Toplevel):
                     text = f.read().decode("utf-8", "replace")
             else:
                 text = "Sin logs todavía.\n\nSi el servicio se inició fuera del panel, su salida no se captura aquí."
-            bottom = self.txt.yview()[1] > .98
+            bottom = self._at_bottom()
             self.txt.config(state="normal")
             self.txt.delete("1.0", "end")
             self.txt.insert("end", text)
             self.txt.config(state="disabled")
             if bottom:
                 self.txt.see("end")
+                self._hide_float()
+            else:
+                self._show_float()
         self.after(800, self._refresh)
-
 
 # ─────────────────────────── Ajustes ───────────────────────────
 OPENAI_PRESETS = {
@@ -634,11 +894,19 @@ OPENAI_PRESETS = {
     "Personalizado": ("", "Cualquier servidor compatible con la API de OpenAI (vLLM y similares)."),
 }
 ANTHROPIC_MODELS = ["claude-sonnet-5", "claude-haiku-4-5-20251001", "claude-opus-5-5"]
-PROVIDERS = ("ollama", "anthropic", "openai")
+GEMINI_MODELS = [
+    "gemini-2.5-flash",
+    "gemini-2.5-pro",
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro",
+]
+PROVIDERS = ("ollama", "anthropic", "openai", "gemini")
 
 
 class Settings(tk.Toplevel):
-    WIDTH = 700
+    WIDTH = 780
 
     def __init__(self, app):
         super().__init__(app)
@@ -698,7 +966,12 @@ class Settings(tk.Toplevel):
         prov = env.get("DEFAULT_PROVIDER", "ollama").strip().lower()
         self.prov = tk.StringVar(value=prov if prov in PROVIDERS else "ollama")
         self.chips = {}
-        for v, t in (("ollama", "Ollama, local"), ("anthropic", "Claude"), ("openai", "Compatible con OpenAI")):
+        for v, t in (
+            ("ollama", "Ollama, local"),
+            ("anthropic", "Claude"),
+            ("openai", "Compatible con OpenAI"),
+            ("gemini", "Gemini"),
+        ):
             b = Pill(chips, t, lambda v=v: self._set_prov(v), height=38)
             b.pack(side="left", padx=(0, 8))
             self.chips[v] = b
@@ -770,6 +1043,30 @@ class Settings(tk.Toplevel):
         self.x_hint = lbl(p, OPENAI_PRESETS[guess][1], wrap=600)
         self.x_hint.pack(anchor="w", pady=(2, 0))
 
+        # Gemini (Google AI)
+        p = self.pages["gemini"]
+        lbl(p, "API key de Google AI (Gemini)").pack(anchor="w")
+        r = tk.Frame(p, bg=C["card"])
+        r.pack(fill="x", pady=(4, 12))
+        self.g_key = tk.StringVar(value=env.get("GEMINI_API_KEY", ""))
+        e = field(r, self.g_key, show="•")
+        e.pack(side="left", fill="x", expand=True, ipady=7)
+        Pill(r, "Ver", lambda e=e: e.config(show="" if e.cget("show") else "•"), kind="ghost", width=60, height=36).pack(side="left", padx=(8, 0))
+        lbl(p, "Modelo").pack(anchor="w")
+        r = tk.Frame(p, bg=C["card"])
+        r.pack(fill="x", pady=(4, 6))
+        self.g_model = tk.StringVar(value=env.get("GEMINI_MODEL", "gemini-2.5-flash"))
+        self.g_combo = ttk.Combobox(r, textvariable=self.g_model, values=GEMINI_MODELS)
+        self.g_combo.pack(side="left", fill="x", expand=True)
+        Pill(r, "Obtener modelos", self._fetch_gemini, kind="tonal", height=36).pack(side="left", padx=(8, 0))
+        self.g_status = lbl(p, "Usá «Obtener modelos» para listar lo que permite tu API key.", wrap=600)
+        self.g_status.pack(anchor="w")
+        self.g_checklist = tk.Text(p, height=1, bg=C["card_hi"], fg=C["text"], font=FMONO, relief="flat", bd=0,
+                                   padx=10, pady=8, wrap="none", highlightthickness=0, state="disabled")
+        for tag, color in (("ok", C["good"]), ("no", C["err"]), ("und", C["dim"])):
+            self.g_checklist.tag_configure(tag, foreground=color)
+        lbl(p, "✓ = soporta tools (necesario para ELIPSE). ✗ = no. ? = no se pudo comprobar.", wrap=600).pack(anchor="w", pady=(2, 0))
+
         Pill(f, "Guardar y aplicar", self._save, kind="filled", height=46).pack(anchor="e", pady=(14, 0))
         self._set_prov(self.prov.get())
         return f
@@ -819,6 +1116,83 @@ class Settings(tk.Toplevel):
             except Exception as e:
                 ui(self._got_models, [], str(e))
         threading.Thread(target=run, daemon=True).start()
+
+    def _fetch_gemini(self):
+        key = self.g_key.get().strip()
+        if not key:
+            messagebox.showerror("Falta la API key", "Ingresa tu API key de Google AI primero.", parent=self)
+            return
+        self.g_status.config(text="Consultando modelos de Gemini…", fg=C["muted"])
+        self.g_checklist.pack_forget()
+        self.model_box.fit()
+        self._autosize()
+
+        def run():
+            try:
+                ui(self._got_gemini_models, fetch_gemini_models(key), None)
+            except Exception as e:
+                ui(self._got_gemini_models, [], str(e))
+        threading.Thread(target=run, daemon=True).start()
+
+    def _got_gemini_models(self, models, err):
+        if not self.winfo_exists():
+            return
+        if err or not models:
+            self.g_status.config(
+                text=err or "La API no devolvió modelos con generateContent.",
+                fg=C["err"] if err else C["muted"],
+            )
+            return
+        self.g_combo["values"] = models
+        if self.g_model.get().strip() not in models:
+            self.g_model.set(models[0])
+        self.g_status.config(
+            text=f"{len(models)} modelos encontrados. Verificando cuáles soportan tool-calling…",
+            fg=C["good"],
+        )
+        self._check_gemini_tool_support(models)
+
+    def _check_gemini_tool_support(self, models):
+        """Prueba cada modelo Gemini con generateContent + functionDeclarations (en paralelo)."""
+        key = self.g_key.get().strip()
+        icon = {True: ("✓", "ok"), False: ("✗", "no"), None: ("?", "und")}
+        results = {}
+        self.g_checklist.pack(fill="x", pady=(6, 8))
+        self._render_gemini_checklist(models, results, icon)
+
+        def worker():
+            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
+                futs = {ex.submit(check_gemini_tool_support, key, m): m for m in models}
+                for fut in concurrent.futures.as_completed(futs):
+                    m = futs[fut]
+                    try:
+                        results[m] = fut.result()
+                    except Exception:
+                        results[m] = None
+                    ui(self._render_gemini_checklist, models, dict(results), icon)
+            ui(self._gemini_checklist_done, len(models))
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _render_gemini_checklist(self, models, results, icon):
+        if not self.winfo_exists():
+            return
+        self.g_checklist.config(state="normal", height=min(len(models), 12))
+        self.g_checklist.delete("1.0", "end")
+        for m in models:
+            if m in results:
+                mark, tag = icon[results[m]]
+            else:
+                mark, tag = "…", "und"
+            self.g_checklist.insert("end", f"{mark}  ", tag)
+            self.g_checklist.insert("end", f"{m}\n")
+        self.g_checklist.config(state="disabled")
+        self.model_box.fit()
+        self._autosize()
+
+    def _gemini_checklist_done(self, total):
+        if not self.winfo_exists():
+            return
+        self.g_status.config(text=f"{total} modelos encontrados.", fg=C["good"])
 
     def _got_models(self, models, err):
         if not self.winfo_exists():
@@ -886,6 +1260,14 @@ class Settings(tk.Toplevel):
                 messagebox.showerror("Falta la API key", "Ingresa tu API key de Anthropic.", parent=self)
                 return
             up.update(ANTHROPIC_API_KEY=self.a_key.get().strip(), ANTHROPIC_MODEL=self.a_model.get().strip() or "claude-sonnet-5")
+        elif p == "gemini":
+            if not self.g_key.get().strip():
+                messagebox.showerror("Falta la API key", "Ingresa tu API key de Google AI (Gemini).", parent=self)
+                return
+            up.update(
+                GEMINI_API_KEY=self.g_key.get().strip(),
+                GEMINI_MODEL=self.g_model.get().strip() or "gemini-2.5-flash",
+            )
         else:
             if not self.x_model.get().strip():
                 messagebox.showerror("Falta el modelo", "OPENAI_MODEL es obligatorio.", parent=self)
@@ -1018,6 +1400,7 @@ class Settings(tk.Toplevel):
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
+        _init_fonts()
         self.title("ELIPSE")
         self.geometry("640x560")
         self.configure(bg=C["bg"])
@@ -1025,6 +1408,9 @@ class App(tk.Tk):
         style_ttk(self)
         self._closing, self._toast_id, self._win, self._errs = False, None, {}, 0
         self.protocol("WM_DELETE_WINDOW", self.close)
+
+        # Carpetas, .env y avisos de dependencias (no bloquea la UI)
+        self._setup_notes = ensure_project_layout()
 
         self.services = [
             Service(self, "ollama", "Ollama", OLLAMA_PORT, "", launch_ollama, kill_ollama, installed=lambda: bool(find_ollama())),
@@ -1057,6 +1443,8 @@ class App(tk.Tk):
         self._pump()
         self._tick()
         threading.Thread(target=self._poll_loop, daemon=True).start()
+        if self._setup_notes:
+            self.after(600, lambda: self._show_setup_notes(self._setup_notes))
 
     # -- errores: nunca mueren en silencio --
     def report_callback_exception(self, exc, val, tb):
@@ -1138,21 +1526,70 @@ class App(tk.Tk):
         else:
             self.toast(f"No encontré {CLIENT_FILE} junto al panel")
 
+    def _show_setup_notes(self, notes):
+        """Avisa de .env creado, app/ faltante o paquetes Python sin instalar."""
+        if not notes:
+            return
+        msg = "\n\n".join(notes)
+        # Si solo creó .env, un toast basta; si hay problemas serios, messagebox.
+        serious = any("app/" in n or "paquetes" in n or "No pude" in n for n in notes)
+        if serious:
+            messagebox.showwarning("Preparación del entorno", msg, parent=self)
+        else:
+            self.toast(notes[0][:120])
+
     def install_ollama(self):
-        if not IS_WIN:
+        """Descarga/instala Ollama en Windows o Linux (script oficial)."""
+        if IS_WIN:
+            self.toast("Descargando el instalador de Ollama…")
+
+            def run_win():
+                try:
+                    path = os.path.join(tempfile.gettempdir(), "OllamaSetup.exe")
+                    urllib.request.urlretrieve(OLLAMA_INSTALLER_WIN, path)
+                    subprocess.Popen([path])
+                    ui(self.toast, "Instalador abierto. Sigue los pasos en esa ventana.")
+                except Exception as e:
+                    ui(messagebox.showerror, "No se pudo descargar Ollama",
+                       f"{e}\n\nDescárgalo desde https://ollama.com/download")
+            threading.Thread(target=run_win, daemon=True).start()
+            return
+
+        # Linux / otros: script oficial (requiere curl o wget)
+        if not messagebox.askyesno(
+            "Instalar Ollama",
+            "Se va a ejecutar el instalador oficial de Ollama:\n\n"
+            "  curl -fsSL https://ollama.com/install.sh | sh\n\n"
+            "Puede pedir contraseña de administrador. ¿Continuar?",
+            parent=self,
+        ):
             webbrowser.open("https://ollama.com/download")
             return
-        self.toast("Descargando el instalador de Ollama…")
 
-        def run():
+        self.toast("Instalando Ollama… (puede pedir sudo)")
+
+        def run_linux():
             try:
-                path = os.path.join(tempfile.gettempdir(), "OllamaSetup.exe")
-                urllib.request.urlretrieve(OLLAMA_INSTALLER, path)
-                subprocess.Popen([path])
-                ui(self.toast, "Instalador abierto. Sigue los pasos en esa ventana.")
+                if shutil.which("curl"):
+                    cmd = f"curl -fsSL {OLLAMA_INSTALL_SH} | sh"
+                elif shutil.which("wget"):
+                    cmd = f"wget -qO- {OLLAMA_INSTALL_SH} | sh"
+                else:
+                    ui(messagebox.showerror, "Falta curl o wget",
+                       "Instalá curl o wget, o descargá Ollama desde https://ollama.com/download")
+                    return
+                r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=600)
+                if r.returncode == 0 and find_ollama():
+                    ui(self.toast, "Ollama instalado. Ya podés iniciarlo desde el panel.")
+                    ui(self.svc["ollama"].card.refresh)
+                else:
+                    tail = ((r.stderr or r.stdout or "")[-500:]) or f"código {r.returncode}"
+                    ui(messagebox.showerror, "Instalación de Ollama",
+                       f"No se completó bien.\n\n{tail}\n\nProba desde https://ollama.com/download")
             except Exception as e:
-                ui(messagebox.showerror, "No se pudo descargar Ollama", f"{e}\n\nDescárgalo desde https://ollama.com/download")
-        threading.Thread(target=run, daemon=True).start()
+                ui(messagebox.showerror, "No se pudo instalar Ollama",
+                   f"{e}\n\nDescárgalo desde https://ollama.com/download")
+        threading.Thread(target=run_linux, daemon=True).start()
 
     def toast(self, msg):
         self.toast_lbl.config(text=msg)

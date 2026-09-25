@@ -41,7 +41,19 @@
     </span>
   </button>
 
-  <aside class="sidebar">
+  <aside class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" type="button"
+            aria-label="Minimizar panel" title="Minimizar panel">
+      <svg class="icon-collapse" viewBox="0 0 24 24" width="18" height="18" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M15 6l-6 6 6 6"/>
+      </svg>
+      <svg class="icon-expand" viewBox="0 0 24 24" width="18" height="18" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M9 6l6 6-6 6"/>
+      </svg>
+    </button>
+
     <div class="brand">
       <img class="brand-logo" src="src/logo.png" alt="ELIPSE" width="1536" height="1024">
       <div class="brand-sub">consola de control</div>
