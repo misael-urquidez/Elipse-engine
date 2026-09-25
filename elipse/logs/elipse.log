@@ -2465,3 +2465,840 @@ INFO:     127.0.0.1:64446 - "GET /v1/status HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64448 - "GET /v1/status HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64450 - "GET /v1/status HTTP/1.1" 200 OK
 INFO:     127.0.0.1:64454 - "GET /v1/status HTTP/1.1" 200 OK
+
+===== 2026-09-25 14:27:19 iniciando ELIPSE Core =====
+/usr/bin/python3: No module named uvicorn
+
+===== 2026-09-25 14:38:24 iniciando ELIPSE Core =====
+/home/misa/Elipse-engine/elipse/.venv/bin/python: No module named uvicorn
+
+===== 2026-09-25 14:38:28 iniciando ELIPSE Core =====
+/home/misa/Elipse-engine/elipse/.venv/bin/python: No module named uvicorn
+
+===== 2026-09-25 14:38:45 iniciando ELIPSE Core =====
+INFO:     Started server process [13247]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:59280 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59294 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59304 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33834 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33848 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33858 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33862 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59250 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59252 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59266 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59276 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53878 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53884 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53890 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53896 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50034 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50042 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50050 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50060 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42670 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42678 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42684 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42690 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42698 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42684 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39894 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39896 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42684 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42684 - "POST /v1/chat HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:39908 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39914 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37130 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37136 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37140 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37144 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57774 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57790 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "POST /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57806 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "OPTIONS /v1/task/06385356 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "GET /v1/task/06385356 HTTP/1.1" 200 OK
+/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   0%|          | 0.00/79.3M [00:00<?, ?iB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   0%|          | 51.0k/79.3M [00:00<04:17, 323kiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   0%|          | 204k/79.3M [00:00<02:01, 684kiB/s] /home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   1%|          | 612k/79.3M [00:00<00:44, 1.85MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   2%|▏         | 1.24M/79.3M [00:00<00:23, 3.45MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   3%|▎         | 2.31M/79.3M [00:00<00:13, 5.89MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   4%|▍         | 3.44M/79.3M [00:00<00:10, 7.71MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   6%|▌         | 4.58M/79.3M [00:00<00:08, 8.99MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   7%|▋         | 5.72M/79.3M [00:00<00:07, 9.88MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:   9%|▊         | 6.84M/79.3M [00:01<00:07, 10.5MiB/s]INFO:     127.0.0.1:57778 - "GET /v1/task/06385356 HTTP/1.1" 200 OK
+/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  10%|█         | 7.97M/79.3M [00:01<00:06, 10.9MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  11%|█▏        | 9.11M/79.3M [00:01<00:06, 11.2MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  13%|█▎        | 10.3M/79.3M [00:01<00:06, 11.3MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  14%|█▍        | 11.4M/79.3M [00:01<00:06, 11.5MiB/s]INFO:     127.0.0.1:57814 - "GET /v1/status HTTP/1.1" 200 OK
+/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  16%|█▌        | 12.5M/79.3M [00:01<00:06, 11.6MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  17%|█▋        | 13.7M/79.3M [00:01<00:05, 11.7MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  19%|█▊        | 14.8M/79.3M [00:01<00:05, 11.7MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  20%|██        | 15.9M/79.3M [00:01<00:05, 11.7MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  22%|██▏       | 17.1M/79.3M [00:01<00:05, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  23%|██▎       | 18.2M/79.3M [00:02<00:05, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  24%|██▍       | 19.4M/79.3M [00:02<00:05, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  26%|██▌       | 20.5M/79.3M [00:02<00:05, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  27%|██▋       | 21.6M/79.3M [00:02<00:05, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  29%|██▊       | 22.8M/79.3M [00:02<00:05, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  30%|███       | 23.9M/79.3M [00:02<00:04, 11.8MiB/s]INFO:     127.0.0.1:57778 - "GET /v1/task/06385356 HTTP/1.1" 200 OK
+/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  32%|███▏      | 25.1M/79.3M [00:02<00:04, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  33%|███▎      | 26.2M/79.3M [00:02<00:04, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  34%|███▍      | 27.3M/79.3M [00:02<00:04, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  36%|███▌      | 28.5M/79.3M [00:02<00:04, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  37%|███▋      | 29.6M/79.3M [00:03<00:04, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  39%|███▉      | 30.7M/79.3M [00:03<00:04, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  40%|████      | 31.9M/79.3M [00:03<00:04, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  42%|████▏     | 33.0M/79.3M [00:03<00:04, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  43%|████▎     | 34.2M/79.3M [00:03<00:04, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  45%|████▍     | 35.3M/79.3M [00:03<00:03, 11.9MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  46%|████▌     | 36.4M/79.3M [00:03<00:03, 11.9MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  47%|████▋     | 37.6M/79.3M [00:03<00:03, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  49%|████▉     | 38.7M/79.3M [00:03<00:03, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  50%|█████     | 39.9M/79.3M [00:03<00:03, 11.8MiB/s]INFO:     127.0.0.1:55326 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "GET /v1/task/06385356 HTTP/1.1" 200 OK
+/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  52%|█████▏    | 41.0M/79.3M [00:04<00:03, 11.9MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  53%|█████▎    | 42.1M/79.3M [00:04<00:03, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  55%|█████▍    | 43.3M/79.3M [00:04<00:03, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  56%|█████▌    | 44.4M/79.3M [00:04<00:03, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  57%|█████▋    | 45.5M/79.3M [00:04<00:02, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  59%|█████▉    | 46.7M/79.3M [00:04<00:02, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  60%|██████    | 47.8M/79.3M [00:04<00:02, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  62%|██████▏   | 49.0M/79.3M [00:04<00:02, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  63%|██████▎   | 50.1M/79.3M [00:04<00:02, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  65%|██████▍   | 51.2M/79.3M [00:04<00:02, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  66%|██████▌   | 52.4M/79.3M [00:05<00:02, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  67%|██████▋   | 53.5M/79.3M [00:05<00:02, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  69%|██████▉   | 54.6M/79.3M [00:05<00:02, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  70%|███████   | 55.8M/79.3M [00:05<00:02, 11.8MiB/s]INFO:     127.0.0.1:57778 - "GET /v1/task/06385356 HTTP/1.1" 200 OK
+/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  72%|███████▏  | 56.9M/79.3M [00:05<00:01, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  73%|███████▎  | 58.0M/79.3M [00:05<00:01, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  75%|███████▍  | 59.2M/79.3M [00:05<00:01, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  76%|███████▌  | 60.3M/79.3M [00:05<00:01, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  77%|███████▋  | 61.4M/79.3M [00:05<00:01, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  79%|███████▉  | 62.6M/79.3M [00:05<00:01, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  80%|████████  | 63.7M/79.3M [00:06<00:01, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  82%|████████▏ | 64.9M/79.3M [00:06<00:01, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  83%|████████▎ | 66.0M/79.3M [00:06<00:01, 11.9MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  85%|████████▍ | 67.1M/79.3M [00:06<00:01, 11.9MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  86%|████████▌ | 68.3M/79.3M [00:06<00:00, 11.9MiB/s]INFO:     127.0.0.1:55342 - "GET /v1/status HTTP/1.1" 200 OK
+/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  87%|████████▋ | 69.4M/79.3M [00:06<00:00, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  89%|████████▉ | 70.5M/79.3M [00:06<00:00, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  90%|█████████ | 71.7M/79.3M [00:06<00:00, 11.8MiB/s]INFO:     127.0.0.1:57778 - "GET /v1/task/06385356 HTTP/1.1" 200 OK
+/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  92%|█████████▏| 72.8M/79.3M [00:06<00:00, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  93%|█████████▎| 73.9M/79.3M [00:06<00:00, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  95%|█████████▍| 75.1M/79.3M [00:07<00:00, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  96%|█████████▌| 76.2M/79.3M [00:07<00:00, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  98%|█████████▊| 77.4M/79.3M [00:07<00:00, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz:  99%|█████████▉| 78.5M/79.3M [00:07<00:00, 11.8MiB/s]/home/misa/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz: 100%|██████████| 79.3M/79.3M [00:07<00:00, 11.2MiB/s]
+INFO:     127.0.0.1:57778 - "GET /v1/task/06385356 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55356 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57778 - "GET /v1/task/06385356 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55362 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49336 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49348 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49362 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49378 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34514 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34516 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34522 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34530 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45150 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45166 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45182 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45184 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41564 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41572 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41588 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41594 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37970 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37980 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37996 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38010 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59068 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59076 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59088 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59092 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35632 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35636 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35638 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34370 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34386 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34400 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34402 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36936 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36944 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36958 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36964 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47858 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47868 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47874 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47878 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47882 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60528 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47882 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47882 - "POST /v1/chat HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:60542 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60550 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60560 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49204 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49212 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49228 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49230 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53218 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53230 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53242 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53256 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49540 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49544 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49548 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49548 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49548 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49548 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49564 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49548 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49548 - "POST /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49576 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49548 - "OPTIONS /v1/task/180371cd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49548 - "GET /v1/task/180371cd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38012 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38028 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38034 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38040 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36842 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36850 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36858 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36874 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39738 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39744 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39754 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39760 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39862 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39866 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39876 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39880 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51394 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51398 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51408 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51424 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55714 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55726 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55732 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55746 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39714 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39724 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39732 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39740 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45444 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45446 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45452 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45458 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49442 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49458 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49466 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49476 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36676 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36678 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36680 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36688 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51072 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39292 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39296 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39302 - "GET /v1/status HTTP/1.1" 200 OK
+
+===== 2026-09-25 14:45:16 iniciando ELIPSE Core =====
+INFO:     Started server process [15087]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:45810 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45822 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45826 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48838 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48840 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48850 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50322 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50324 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50330 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50336 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50336 - "POST /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50336 - "OPTIONS /v1/task/5c21093a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50336 - "GET /v1/task/5c21093a HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50344 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34142 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34148 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34156 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34162 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33346 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33358 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33358 - "POST /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33358 - "OPTIONS /v1/task/0d618097 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33358 - "GET /v1/task/0d618097 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33366 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33372 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33374 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43834 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43838 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43846 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43848 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43838 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43838 - "POST /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43838 - "OPTIONS /v1/task/598ea821 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43838 - "GET /v1/task/598ea821 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43850 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34910 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34918 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34934 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34946 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60932 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60934 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60938 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60942 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55310 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55320 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55332 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55336 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56600 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56608 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56620 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56634 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43894 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43902 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43912 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43918 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57996 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57998 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58008 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58012 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60920 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60932 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60936 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60948 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48088 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48104 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48108 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48124 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58136 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58150 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58156 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58158 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35196 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35200 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35206 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35210 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59324 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59326 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59328 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59330 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39586 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39590 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39604 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39610 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60266 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60270 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60278 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60284 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47054 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47068 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47082 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47098 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45406 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45414 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45422 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45438 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45440 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45446 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45456 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45458 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47326 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47334 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47338 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47352 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35374 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35388 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35392 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35396 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43992 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43994 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44004 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44020 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43904 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43914 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43920 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43922 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36706 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36722 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36736 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36740 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36662 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36664 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36680 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36690 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36000 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36002 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36006 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36008 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41970 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41984 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41996 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42004 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41514 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41524 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41528 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41544 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41528 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41538 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15087]
+
+===== 2026-09-25 14:50:48 iniciando ELIPSE Core =====
+INFO:     Started server process [16165]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56952 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56968 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33150 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33162 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33164 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33166 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48038 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48048 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48056 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48068 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57998 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58000 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58008 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58012 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36062 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36078 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36086 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36102 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53080 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53082 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53086 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53088 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42904 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42920 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42936 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42946 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57120 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57122 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57138 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57154 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43260 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43274 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43278 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43280 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49036 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49038 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49050 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45782 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45788 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45800 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45808 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34334 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34342 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34348 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34360 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46868 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46872 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46880 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46890 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37068 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37078 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37086 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37096 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54526 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54538 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [16165]
+
+===== 2026-09-25 15:16:23 iniciando ELIPSE Core =====
+INFO:     Started server process [30062]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:50028 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50044 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50046 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50060 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58964 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58974 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58990 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59000 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50122 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50124 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50132 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50144 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55430 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55434 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55442 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55456 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48664 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48670 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48672 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48676 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39020 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [30062]
+
+===== 2026-09-25 15:19:07 iniciando ELIPSE Core =====
+INFO:     Started server process [31100]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:41406 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41410 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41412 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40812 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40814 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40816 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40832 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44566 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44574 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44580 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44582 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47676 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47688 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47694 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47702 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42070 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42078 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42086 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42094 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42272 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42280 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42292 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42298 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41050 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41066 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41068 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41084 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38842 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38846 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38848 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38862 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36694 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36696 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36706 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36708 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36294 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36298 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36302 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36312 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45288 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45304 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45320 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45322 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58786 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58790 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58792 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58804 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35574 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35590 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35606 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35622 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45142 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45150 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45162 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45172 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46548 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46554 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46556 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46570 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60934 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60938 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60940 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60954 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39528 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39534 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39542 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39554 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58176 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58192 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58204 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58216 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41830 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41836 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41848 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41854 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60308 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60320 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60324 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60336 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52512 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52524 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52530 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52534 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60866 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60878 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60888 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60896 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53514 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53522 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53534 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53546 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53714 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53716 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46738 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46752 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46756 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53722 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53736 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53738 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53746 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48758 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48766 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48768 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48772 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55106 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55118 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55130 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55134 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57950 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57958 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57972 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57982 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54686 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54698 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54712 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53086 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53094 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39802 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39806 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39808 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39814 - "GET /v1/status HTTP/1.1" 200 OK
+
+===== 2026-09-25 15:28:42 iniciando ELIPSE Core =====
+INFO:     Started server process [33116]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:44562 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44574 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44582 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44588 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44602 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44610 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47534 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47546 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "POST /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47564 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47574 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36478 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36482 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36496 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36502 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41642 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41648 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41664 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41680 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44232 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44238 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44246 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44250 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38352 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38356 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38370 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38374 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54238 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "OPTIONS /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47552 - "GET /v1/task/aa07d082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54246 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54260 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54272 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44012 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44028 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44042 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44044 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60140 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60146 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60152 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60168 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54742 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54758 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54768 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54774 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38768 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38772 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38784 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38798 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39456 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39458 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39464 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39474 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51312 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51318 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51326 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51338 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51338 - "POST /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51338 - "OPTIONS /v1/task/8cd8cfd9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51340 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51338 - "GET /v1/task/8cd8cfd9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51338 - "OPTIONS /v1/task/8cd8cfd9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51338 - "GET /v1/task/8cd8cfd9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60752 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60762 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60770 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60782 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46330 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46342 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46358 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [33116]
+
+===== 2026-09-25 15:31:09 iniciando ELIPSE Core =====
+INFO:     Started server process [33580]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:46404 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46408 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43196 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "POST /v1/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43214 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43216 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43218 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35588 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35590 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35600 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59832 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59840 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59844 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59856 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42666 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42668 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42674 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42684 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38934 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38942 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38944 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38954 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49622 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49636 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49644 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49646 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57026 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57042 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "OPTIONS /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43210 - "GET /v1/task/5a8a7ac2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57044 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57054 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59112 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59128 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59130 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59140 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60768 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60782 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60796 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60800 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59732 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59734 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59738 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59752 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34716 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34718 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34722 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34732 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51126 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51134 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51144 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51150 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54654 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54664 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54672 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54686 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44638 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44648 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44654 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44662 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54786 - "GET /v1/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54800 - "GET /v1/status HTTP/1.1" 200 OK
